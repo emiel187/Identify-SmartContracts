@@ -1,0 +1,197 @@
+{
+  "contractName": "Presale",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    }
+  ],
+  "bytecode": "0x6060604052341561000f57600080fd5b336000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055506102858061005e6000396000f30060606040526004361061004c576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680638da5cb5b14610051578063f2fde38b146100a6575b600080fd5b341561005c57600080fd5b6100646100df565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b34156100b157600080fd5b6100dd600480803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050610104565b005b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614151561015f57600080fd5b600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff161415151561019b57600080fd5b806000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055508073ffffffffffffffffffffffffffffffffffffffff166000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e060405160405180910390a3505600a165627a7a723058204e8427369edd8b595670b06ac1ab1dffad2a9c4bb2cec386ef78dde779525fbc0029",
+  "deployedBytecode": "0x60606040526004361061004c576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680638da5cb5b14610051578063f2fde38b146100a6575b600080fd5b341561005c57600080fd5b6100646100df565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b34156100b157600080fd5b6100dd600480803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050610104565b005b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614151561015f57600080fd5b600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff161415151561019b57600080fd5b806000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055508073ffffffffffffffffffffffffffffffffffffffff166000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e060405160405180910390a3505600a165627a7a723058204e8427369edd8b595670b06ac1ab1dffad2a9c4bb2cec386ef78dde779525fbc0029",
+  "sourceMap": "36:74:1:-;;;72:36;;;;;;;;599:10:4;591:5;;:18;;;;;;;;;;;;;;;;;;36:74:1;;;;;;",
+  "deployedSourceMap": "36:74:1:-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;328:20:4;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;924:170;;;;;;;;;;;;;;;;;;;;;;;;;;;;328:20;;;;;;;;;;;;;:::o;924:170::-;744:5;;;;;;;;;;;730:19;;:10;:19;;;722:28;;;;;;;;1020:1;1000:22;;:8;:22;;;;992:31;;;;;;;;1037:8;1029:5;;:16;;;;;;;;;;;;;;;;;;1079:8;1051:37;;1072:5;;;;;;;;;;;1051:37;;;;;;;;;;;;924:170;:::o",
+  "source": "import '../ownership/Ownable.sol';\n\ncontract Presale is Ownable {\n\n\n    function Presale () {\n        \n    }\n}",
+  "sourcePath": "/Users/kevinleyssens/Documents/Projecten/presale_identify/contracts/crowdsale/Presale.sol",
+  "ast": {
+    "attributes": {
+      "absolutePath": "/Users/kevinleyssens/Documents/Projecten/presale_identify/contracts/crowdsale/Presale.sol",
+      "exportedSymbols": {
+        "Presale": [
+          66
+        ]
+      }
+    },
+    "children": [
+      {
+        "attributes": {
+          "SourceUnit": 815,
+          "absolutePath": "/Users/kevinleyssens/Documents/Projecten/presale_identify/contracts/ownership/Ownable.sol",
+          "file": "../ownership/Ownable.sol",
+          "scope": 67,
+          "symbolAliases": [
+            null
+          ],
+          "unitAlias": ""
+        },
+        "id": 59,
+        "name": "ImportDirective",
+        "src": "0:34:1"
+      },
+      {
+        "attributes": {
+          "contractDependencies": [
+            814
+          ],
+          "contractKind": "contract",
+          "documentation": null,
+          "fullyImplemented": true,
+          "linearizedBaseContracts": [
+            66,
+            814
+          ],
+          "name": "Presale",
+          "scope": 67
+        },
+        "children": [
+          {
+            "attributes": {
+              "arguments": [
+                null
+              ]
+            },
+            "children": [
+              {
+                "attributes": {
+                  "contractScope": null,
+                  "name": "Ownable",
+                  "referencedDeclaration": 814,
+                  "type": "contract Ownable"
+                },
+                "id": 60,
+                "name": "UserDefinedTypeName",
+                "src": "56:7:1"
+              }
+            ],
+            "id": 61,
+            "name": "InheritanceSpecifier",
+            "src": "56:7:1"
+          },
+          {
+            "attributes": {
+              "constant": false,
+              "implemented": true,
+              "isConstructor": true,
+              "modifiers": [
+                null
+              ],
+              "name": "Presale",
+              "payable": false,
+              "scope": 66,
+              "stateMutability": "nonpayable",
+              "superFunction": null,
+              "visibility": "public"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "parameters": [
+                    null
+                  ]
+                },
+                "children": [],
+                "id": 62,
+                "name": "ParameterList",
+                "src": "89:2:1"
+              },
+              {
+                "attributes": {
+                  "parameters": [
+                    null
+                  ]
+                },
+                "children": [],
+                "id": 63,
+                "name": "ParameterList",
+                "src": "92:0:1"
+              },
+              {
+                "attributes": {
+                  "statements": [
+                    null
+                  ]
+                },
+                "children": [],
+                "id": 64,
+                "name": "Block",
+                "src": "92:16:1"
+              }
+            ],
+            "id": 65,
+            "name": "FunctionDefinition",
+            "src": "72:36:1"
+          }
+        ],
+        "id": 66,
+        "name": "ContractDefinition",
+        "src": "36:74:1"
+      }
+    ],
+    "id": 67,
+    "name": "SourceUnit",
+    "src": "0:110:1"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.4.18+commit.9cf6e910.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "1.0.1",
+  "updatedAt": "2018-02-19T09:40:49.958Z"
+}

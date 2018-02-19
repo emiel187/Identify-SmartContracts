@@ -1,0 +1,18 @@
+{
+  "name": "Identify Presale",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "TheLedger.",
+  "license": "MIT",
+  "scripts": {
+    "start": "ganache-cli",
+    "test": "truffle test --network testing"
+  },
+  "dependencies": {
+    "ganache-cli": "^6.0.3",
+    "js-sha256": "^0.8.0",
+    "solc": "^0.4.19",
+    "truffle": "^4.0.3",
+    "truffle-contract": "^3.0.1"
+  }
+}
