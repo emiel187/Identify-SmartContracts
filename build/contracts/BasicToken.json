@@ -1,0 +1,539 @@
+{
+  "contractName": "BasicToken",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "totalSupply",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_owner",
+          "type": "address"
+        }
+      ],
+      "name": "balanceOf",
+      "outputs": [
+        {
+          "name": "balance",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "transfer",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "Transfer",
+      "type": "event"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "pragma solidity ^0.4.18;\n\n\nimport \"./ERC20Basic.sol\";\nimport \"../math/SafeMath.sol\";\n\n\n/**\n * @title Basic token\n * @dev Basic version of StandardToken, with no allowances.\n */\ncontract BasicToken is ERC20Basic {\n  using SafeMath for uint256;\n\n  mapping(address => uint256) balances;\n\n  uint256 totalSupply_;\n\n  /**\n  * @dev total number of tokens in existence\n  */\n  function totalSupply() public view returns (uint256) {\n    return totalSupply_;\n  }\n\n\n  /**\n  * @dev Gets the balance of the specified address.\n  * @param _owner The address to query the the balance of.\n  * @return An uint256 representing the amount owned by the passed address.\n  */\n  function balanceOf(address _owner) public view returns (uint256 balance) {\n    return balances[_owner];\n  }\n\n}",
+  "sourcePath": "/Users/kevinleyssens/Documents/Projecten/presale_identify/contracts/token/BasicToken.sol",
+  "ast": {
+    "attributes": {
+      "absolutePath": "/Users/kevinleyssens/Documents/Projecten/presale_identify/contracts/token/BasicToken.sol",
+      "exportedSymbols": {
+        "BasicToken": [
+          407
+        ]
+      }
+    },
+    "children": [
+      {
+        "attributes": {
+          "literals": [
+            "solidity",
+            "^",
+            "0.4",
+            ".18"
+          ]
+        },
+        "id": 373,
+        "name": "PragmaDirective",
+        "src": "0:24:3"
+      },
+      {
+        "attributes": {
+          "SourceUnit": 956,
+          "absolutePath": "/Users/kevinleyssens/Documents/Projecten/presale_identify/contracts/token/ERC20Basic.sol",
+          "file": "./ERC20Basic.sol",
+          "scope": 408,
+          "symbolAliases": [
+            null
+          ],
+          "unitAlias": ""
+        },
+        "id": 374,
+        "name": "ImportDirective",
+        "src": "27:26:3"
+      },
+      {
+        "attributes": {
+          "SourceUnit": 316,
+          "absolutePath": "/Users/kevinleyssens/Documents/Projecten/presale_identify/contracts/math/SafeMath.sol",
+          "file": "../math/SafeMath.sol",
+          "scope": 408,
+          "symbolAliases": [
+            null
+          ],
+          "unitAlias": ""
+        },
+        "id": 375,
+        "name": "ImportDirective",
+        "src": "54:30:3"
+      },
+      {
+        "attributes": {
+          "contractDependencies": [
+            955
+          ],
+          "contractKind": "contract",
+          "documentation": "@title Basic token\n@dev Basic version of StandardToken, with no allowances.",
+          "fullyImplemented": false,
+          "linearizedBaseContracts": [
+            407,
+            955
+          ],
+          "name": "BasicToken",
+          "scope": 408
+        },
+        "children": [
+          {
+            "attributes": {
+              "arguments": [
+                null
+              ]
+            },
+            "children": [
+              {
+                "attributes": {
+                  "contractScope": null,
+                  "name": "ERC20Basic",
+                  "referencedDeclaration": 955,
+                  "type": "contract ERC20Basic"
+                },
+                "id": 376,
+                "name": "UserDefinedTypeName",
+                "src": "200:10:3"
+              }
+            ],
+            "id": 377,
+            "name": "InheritanceSpecifier",
+            "src": "200:10:3"
+          },
+          {
+            "children": [
+              {
+                "attributes": {
+                  "contractScope": null,
+                  "name": "SafeMath",
+                  "referencedDeclaration": 315,
+                  "type": "library SafeMath"
+                },
+                "id": 378,
+                "name": "UserDefinedTypeName",
+                "src": "221:8:3"
+              },
+              {
+                "attributes": {
+                  "name": "uint256",
+                  "type": "uint256"
+                },
+                "id": 379,
+                "name": "ElementaryTypeName",
+                "src": "234:7:3"
+              }
+            ],
+            "id": 380,
+            "name": "UsingForDirective",
+            "src": "215:27:3"
+          },
+          {
+            "attributes": {
+              "constant": false,
+              "name": "balances",
+              "scope": 407,
+              "stateVariable": true,
+              "storageLocation": "default",
+              "type": "mapping(address => uint256)",
+              "value": null,
+              "visibility": "internal"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "type": "mapping(address => uint256)"
+                },
+                "children": [
+                  {
+                    "attributes": {
+                      "name": "address",
+                      "type": "address"
+                    },
+                    "id": 381,
+                    "name": "ElementaryTypeName",
+                    "src": "254:7:3"
+                  },
+                  {
+                    "attributes": {
+                      "name": "uint256",
+                      "type": "uint256"
+                    },
+                    "id": 382,
+                    "name": "ElementaryTypeName",
+                    "src": "265:7:3"
+                  }
+                ],
+                "id": 383,
+                "name": "Mapping",
+                "src": "246:27:3"
+              }
+            ],
+            "id": 384,
+            "name": "VariableDeclaration",
+            "src": "246:36:3"
+          },
+          {
+            "attributes": {
+              "constant": false,
+              "name": "totalSupply_",
+              "scope": 407,
+              "stateVariable": true,
+              "storageLocation": "default",
+              "type": "uint256",
+              "value": null,
+              "visibility": "internal"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "name": "uint256",
+                  "type": "uint256"
+                },
+                "id": 385,
+                "name": "ElementaryTypeName",
+                "src": "287:7:3"
+              }
+            ],
+            "id": 386,
+            "name": "VariableDeclaration",
+            "src": "287:20:3"
+          },
+          {
+            "attributes": {
+              "constant": true,
+              "implemented": true,
+              "isConstructor": false,
+              "modifiers": [
+                null
+              ],
+              "name": "totalSupply",
+              "payable": false,
+              "scope": 407,
+              "stateMutability": "view",
+              "superFunction": 930,
+              "visibility": "public"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "parameters": [
+                    null
+                  ]
+                },
+                "children": [],
+                "id": 387,
+                "name": "ParameterList",
+                "src": "388:2:3"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "",
+                      "scope": 394,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint256",
+                          "type": "uint256"
+                        },
+                        "id": 388,
+                        "name": "ElementaryTypeName",
+                        "src": "412:7:3"
+                      }
+                    ],
+                    "id": 389,
+                    "name": "VariableDeclaration",
+                    "src": "412:7:3"
+                  }
+                ],
+                "id": 390,
+                "name": "ParameterList",
+                "src": "411:9:3"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "functionReturnParameters": 390
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "overloadedDeclarations": [
+                            null
+                          ],
+                          "referencedDeclaration": 386,
+                          "type": "uint256",
+                          "value": "totalSupply_"
+                        },
+                        "id": 391,
+                        "name": "Identifier",
+                        "src": "434:12:3"
+                      }
+                    ],
+                    "id": 392,
+                    "name": "Return",
+                    "src": "427:19:3"
+                  }
+                ],
+                "id": 393,
+                "name": "Block",
+                "src": "421:30:3"
+              }
+            ],
+            "id": 394,
+            "name": "FunctionDefinition",
+            "src": "368:83:3"
+          },
+          {
+            "attributes": {
+              "constant": true,
+              "implemented": true,
+              "isConstructor": false,
+              "modifiers": [
+                null
+              ],
+              "name": "balanceOf",
+              "payable": false,
+              "scope": 407,
+              "stateMutability": "view",
+              "superFunction": 937,
+              "visibility": "public"
+            },
+            "children": [
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "_owner",
+                      "scope": 406,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "type": "address"
+                        },
+                        "id": 395,
+                        "name": "ElementaryTypeName",
+                        "src": "673:7:3"
+                      }
+                    ],
+                    "id": 396,
+                    "name": "VariableDeclaration",
+                    "src": "673:14:3"
+                  }
+                ],
+                "id": 397,
+                "name": "ParameterList",
+                "src": "672:16:3"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "balance",
+                      "scope": 406,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint256",
+                          "type": "uint256"
+                        },
+                        "id": 398,
+                        "name": "ElementaryTypeName",
+                        "src": "710:7:3"
+                      }
+                    ],
+                    "id": 399,
+                    "name": "VariableDeclaration",
+                    "src": "710:15:3"
+                  }
+                ],
+                "id": 400,
+                "name": "ParameterList",
+                "src": "709:17:3"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "functionReturnParameters": 400
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "type": "uint256"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 384,
+                              "type": "mapping(address => uint256)",
+                              "value": "balances"
+                            },
+                            "id": 401,
+                            "name": "Identifier",
+                            "src": "740:8:3"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 396,
+                              "type": "address",
+                              "value": "_owner"
+                            },
+                            "id": 402,
+                            "name": "Identifier",
+                            "src": "749:6:3"
+                          }
+                        ],
+                        "id": 403,
+                        "name": "IndexAccess",
+                        "src": "740:16:3"
+                      }
+                    ],
+                    "id": 404,
+                    "name": "Return",
+                    "src": "733:23:3"
+                  }
+                ],
+                "id": 405,
+                "name": "Block",
+                "src": "727:34:3"
+              }
+            ],
+            "id": 406,
+            "name": "FunctionDefinition",
+            "src": "654:107:3"
+          }
+        ],
+        "id": 407,
+        "name": "ContractDefinition",
+        "src": "177:587:3"
+      }
+    ],
+    "id": 408,
+    "name": "SourceUnit",
+    "src": "0:764:3"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.4.18+commit.9cf6e910.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "1.0.1",
+  "updatedAt": "2018-02-19T10:31:19.470Z"
+}
