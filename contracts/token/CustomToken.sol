@@ -15,7 +15,6 @@ contract CustomToken is ERC20, BasicToken, Ownable {
 
   mapping (address => mapping (address => uint256)) internal allowed;
 
-  bool public paused = false;
   bool public enableTransfer = true;
 
   /**
@@ -26,25 +25,7 @@ contract CustomToken is ERC20, BasicToken, Ownable {
     _;
   }
 
-  /**
-   * @dev Modifier to make a function callable only when the contract is not paused.
-   */
-  modifier whenNotPaused() {
-    require(!paused);
-    _;
-  }
-
-  /**
-   * @dev Modifier to make a function callable only when the contract is paused.
-   */
-  modifier whenPaused() {
-    require(paused);
-    _;
-  }
-
   event Burn(address indexed burner, uint256 value);
-  event Pause();
-  event Unpause();
   event EnableTransfer();
   event DisableTransfer();
 
@@ -74,11 +55,18 @@ contract CustomToken is ERC20, BasicToken, Ownable {
   function transferFrom(address _from, address _to, uint256 _value) whenTransferEnabled public returns (bool) {
     require(_to != address(0));
     require(_value <= balances[_from]);
-    require(_value <= allowed[_from][msg.sender]);
 
-    balances[_from] = balances[_from].sub(_value);
-    balances[_to] = balances[_to].add(_value);
-    allowed[_from][msg.sender] = allowed[_from][msg.sender].sub(_value);
+
+    if (msg.sender!=owner) {
+      require(_value <= allowed[_from][msg.sender]);
+      allowed[_from][msg.sender] = allowed[_from][msg.sender].sub(_value);
+      balances[_from] = balances[_from].sub(_value);
+      balances[_to] = balances[_to].add(_value);
+    }  else {
+      balances[_from] = balances[_from].sub(_value);
+      balances[_to] = balances[_to].add(_value);
+    }
+
     Transfer(_from, _to, _value);
     return true;
   }
@@ -93,7 +81,13 @@ contract CustomToken is ERC20, BasicToken, Ownable {
    * @param _spender The address which will spend the funds.
    * @param _value The amount of tokens to be spent.
    */
-  function approve(address _spender, uint256 _value) public returns (bool) {
+  function approve(address _spender, uint256 _value) whenTransferEnabled public returns (bool) {
+    // To change the approve amount you first have to reduce the addresses`
+    //  allowance to zero by calling `approve(_spender,0)` if it is not
+    //  already 0 to mitigate the race condition described here:
+    //  https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729
+    require((_value == 0) || (allowed[msg.sender][_spender] == 0));
+    
     allowed[msg.sender][_spender] = _value;
     Approval(msg.sender, _spender, _value);
     return true;
@@ -119,7 +113,7 @@ contract CustomToken is ERC20, BasicToken, Ownable {
    * @param _spender The address which will spend the funds.
    * @param _addedValue The amount of tokens to increase the allowance by.
    */
-  function increaseApproval(address _spender, uint _addedValue) public returns (bool) {
+  function increaseApproval(address _spender, uint _addedValue) whenTransferEnabled public returns (bool) {
     allowed[msg.sender][_spender] = allowed[msg.sender][_spender].add(_addedValue);
     Approval(msg.sender, _spender, allowed[msg.sender][_spender]);
     return true;
@@ -135,7 +129,7 @@ contract CustomToken is ERC20, BasicToken, Ownable {
    * @param _spender The address which will spend the funds.
    * @param _subtractedValue The amount of tokens to decrease the allowance by.
    */
-  function decreaseApproval(address _spender, uint _subtractedValue) public returns (bool) {
+  function decreaseApproval(address _spender, uint _subtractedValue) whenTransferEnabled public returns (bool) {
     uint oldValue = allowed[msg.sender][_spender];
     if (_subtractedValue > oldValue) {
       allowed[msg.sender][_spender] = 0;
@@ -151,33 +145,14 @@ contract CustomToken is ERC20, BasicToken, Ownable {
    * @dev Burns a specific amount of tokens.
    * @param _value The amount of token to be burned.
    */
-  function burn(uint256 _value) public {
-    require(_value <= balances[msg.sender]);
+  function burn(address _burner, uint256 _value) whenTransferEnabled onlyOwner public returns (bool) {
+    require(_value <= balances[_burner]);
     // no need to require value <= totalSupply, since that would imply the
     // sender's balance is greater than the totalSupply, which *should* be an assertion failure
 
-    address burner = msg.sender;
-    balances[burner] = balances[burner].sub(_value);
-    totalSupply_ = totalSupply_.sub(_value);
-    Burn(burner, _value);
-  }
-
-
-  /**
-   * @dev called by the owner to pause, triggers stopped state
-   */
-  function pause() onlyOwner whenNotPaused public returns (bool) {
-    paused = true;
-    Pause();
-    return true;
-  }
-
-  /**
-   * @dev called by the owner to unpause, returns to normal state
-   */
-  function unpause() onlyOwner whenPaused public returns (bool) {
-    paused = false;
-    Unpause();
+    balances[_burner] = balances[_burner].sub(_value);
+    totalSupply = totalSupply.sub(_value);
+    Burn(_burner, _value);
     return true;
   }
    /**
@@ -192,7 +167,7 @@ contract CustomToken is ERC20, BasicToken, Ownable {
   /**
    * @dev called by the owner to disable tranfers
    */
-  function disableTransfer() onlyOwner public returns (bool) {
+  function disableTransfer() onlyOwner whenTransferEnabled public returns (bool) {
     enableTransfer = false;
     DisableTransfer();
     return true;

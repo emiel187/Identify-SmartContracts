@@ -71,7 +71,7 @@
     "children": [
       {
         "attributes": {
-          "SourceUnit": 815,
+          "SourceUnit": 439,
           "absolutePath": "/Users/kevinleyssens/Documents/Projecten/presale_identify/contracts/ownership/Ownable.sol",
           "file": "../ownership/Ownable.sol",
           "scope": 67,
@@ -87,14 +87,14 @@
       {
         "attributes": {
           "contractDependencies": [
-            814
+            438
           ],
           "contractKind": "contract",
           "documentation": null,
           "fullyImplemented": true,
           "linearizedBaseContracts": [
             66,
-            814
+            438
           ],
           "name": "Presale",
           "scope": 67
@@ -111,7 +111,7 @@
                 "attributes": {
                   "contractScope": null,
                   "name": "Ownable",
-                  "referencedDeclaration": 814,
+                  "referencedDeclaration": 438,
                   "type": "contract Ownable"
                 },
                 "id": 60,
@@ -193,5 +193,5 @@
   },
   "networks": {},
   "schemaVersion": "1.0.1",
-  "updatedAt": "2018-02-19T09:40:49.958Z"
+  "updatedAt": "2018-02-19T14:49:53.405Z"
 }
