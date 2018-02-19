@@ -825,14 +825,19 @@
     "1234": {
       "events": {},
       "links": {},
-      "address": "0x873bdf58338d4a5fd40b51efde626afd42cab6a3"
+      "address": "0xa5eebbd1de2dae7363f931b4480032549db5b488"
     },
     "1519051817855": {
       "events": {},
       "links": {},
       "address": "0xd930622919c8d9fc1dbc4542d002bea8c64a2324"
+    },
+    "1519055785422": {
+      "events": {},
+      "links": {},
+      "address": "0x6df1d9816fce8e95393d4daafdd373058fa22931"
     }
   },
   "schemaVersion": "1.0.1",
-  "updatedAt": "2018-02-19T14:55:41.947Z"
+  "updatedAt": "2018-02-19T16:11:33.391Z"
 }
