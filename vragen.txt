@@ -1,1 +1,4 @@
-Als de tokens in het contract zitten. Is de approve and call methode mogelijk op te roepen met als sender het contract?
+
+1.  Als de tokens in het token contract zitten bij deployment. 
+    Is de approveAndCall methode mogelijk op te roepen met als sender het contract?
+    

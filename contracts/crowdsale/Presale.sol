@@ -16,7 +16,7 @@ import '../token/Identify.sol';
  * minted as contributions arrive, note that the crowdsale contract
  * must be owner of the token in order to be able to mint it.
  */
-contract Crowdsale is Ownable {
+contract Presale is Ownable {
   using SafeMath for uint256;
 
   // The token being sold
@@ -33,7 +33,10 @@ contract Crowdsale is Ownable {
   uint256 public rate = 4200000;
 
   // amount of raised money in wei
-  uint256 public weiRaised;
+  uint256 public weiRaised;  
+  
+  // amount of tokens 
+  uint256 public tokenRaised;
 
   // All parameters
   uint256 public capWEI = 8695 * (10 ** uint256(18));
@@ -51,7 +54,7 @@ contract Crowdsale is Ownable {
   event TokenPurchase(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
 
 
-  function Crowdsale(uint256 _startTime, uint256 _endTime, address _wallet, address _token) public 
+  function Presale(uint256 _startTime, uint256 _endTime, address _wallet, Identify _token) public 
   {
     require(_startTime >= now);
     require(_endTime >= _startTime);
@@ -61,7 +64,7 @@ contract Crowdsale is Ownable {
     startTime = _startTime;
     endTime = _startTime.add(10 weeks);
     wallet = _wallet;
-    token = Identify(_token);
+    token = _token;
   }
 
   // fallback function can be used to buy tokens
@@ -71,21 +74,21 @@ contract Crowdsale is Ownable {
   }
 
   // low level token purchase function
-  function buyTokens(address beneficiary) public payable returns (bool){
+  function buyTokens(address beneficiary) public payable returns (bool) {
     require(beneficiary != address(0));
     require(validPurchase());
     require(!hasEnded());
 
     uint256 weiAmount = msg.value;
-    require(weiAmount >= minimumWEI);
 
     // calculate token amount to be created
     uint256 tokens = getTokenAmount(weiAmount);
-
+    
     // update state
     weiRaised = weiRaised.add(weiAmount);
+    tokenRaised = tokenRaised.add(tokens);
 
-    token.transferFrom(token, beneficiary, tokens);
+    // require(token.transferFrom(token, beneficiary, tokens));
     TokenPurchase(msg.sender, beneficiary, weiAmount, tokens);
 
     forwardFunds();
@@ -95,8 +98,10 @@ contract Crowdsale is Ownable {
   // @return true if crowdsale event has ended
   function hasEnded() public view returns (bool) {
     bool capReached = weiRaised >= capWEI;
+    bool capTokensReached = tokenRaised >= capTokens;
     bool ended = now > endTime;
-    return capReached || ended;
+    // bool combined1 = capReached || ended;
+    return (capReached || capTokensReached) || ended;
   }
 
   // Override this method to have a way to add business logic to your crowdsale when buying
@@ -115,8 +120,16 @@ contract Crowdsale is Ownable {
   function validPurchase() internal view returns (bool) {
     bool withinPeriod = now >= startTime && now <= endTime;
     bool nonZeroPurchase = msg.value != 0;
+    bool minimumReached = msg.value >= minimumWEI;
     bool withinCap = weiRaised.add(msg.value) <= capWEI;
-    return withinPeriod && (withinCap && nonZeroPurchase);
+    // bool combined1 = withinPeriod && withinCap;
+    // bool combined2 = nonZeroPurchase && minimumReached;
+    return (withinPeriod && nonZeroPurchase) && (minimumReached && withinCap);
+  }
+
+  function transferOwnershipToken(address _newOwner) onlyOwner public returns (bool) {
+    require(token.transferOwnership(_newOwner));
+    return true;
   }
 
 }

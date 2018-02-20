@@ -24,7 +24,12 @@
         }
       ],
       "name": "transferOwnership",
-      "outputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
       "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
@@ -53,10 +58,10 @@
       "type": "event"
     }
   ],
-  "bytecode": "0x6060604052341561000f57600080fd5b336000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055506102858061005e6000396000f30060606040526004361061004c576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680638da5cb5b14610051578063f2fde38b146100a6575b600080fd5b341561005c57600080fd5b6100646100df565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b34156100b157600080fd5b6100dd600480803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050610104565b005b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614151561015f57600080fd5b600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff161415151561019b57600080fd5b806000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055508073ffffffffffffffffffffffffffffffffffffffff166000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e060405160405180910390a3505600a165627a7a723058209ee36dea21a350e2e0202e70f54c9c6da04878ca7894ca35fbb812afee38de190029",
-  "deployedBytecode": "0x60606040526004361061004c576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680638da5cb5b14610051578063f2fde38b146100a6575b600080fd5b341561005c57600080fd5b6100646100df565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b34156100b157600080fd5b6100dd600480803573ffffffffffffffffffffffffffffffffffffffff16906020019091905050610104565b005b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614151561015f57600080fd5b600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff161415151561019b57600080fd5b806000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055508073ffffffffffffffffffffffffffffffffffffffff166000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e060405160405180910390a3505600a165627a7a723058209ee36dea21a350e2e0202e70f54c9c6da04878ca7894ca35fbb812afee38de190029",
-  "sourceMap": "205:112:1:-;;;274:39;;;;;;;;599:10:3;591:5;;:18;;;;;;;;;;;;;;;;;;205:112:1;;;;;;",
-  "deployedSourceMap": "205:112:1:-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;328:20:3;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;924:170;;;;;;;;;;;;;;;;;;;;;;;;;;;;328:20;;;;;;;;;;;;;:::o;924:170::-;744:5;;;;;;;;;;;730:19;;:10;:19;;;722:28;;;;;;;;1020:1;1000:22;;:8;:22;;;;992:31;;;;;;;;1037:8;1029:5;;:16;;;;;;;;;;;;;;;;;;1079:8;1051:37;;1072:5;;;;;;;;;;;1051:37;;;;;;;;;;;;924:170;:::o",
+  "bytecode": "0x6060604052341561000f57600080fd5b336000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055506102a58061005e6000396000f30060606040526004361061004c576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680638da5cb5b14610051578063f2fde38b146100a6575b600080fd5b341561005c57600080fd5b6100646100f7565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b34156100b157600080fd5b6100dd600480803573ffffffffffffffffffffffffffffffffffffffff1690602001909190505061011c565b604051808215151515815260200191505060405180910390f35b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614151561017957600080fd5b600073ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff16141515156101b557600080fd5b816000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055508173ffffffffffffffffffffffffffffffffffffffff166000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e060405160405180910390a3600190509190505600a165627a7a72305820d7819bf19b959ea8ad7cc6bd6727c7da0c8cafe480bf9f018dc83bcc00b735a90029",
+  "deployedBytecode": "0x60606040526004361061004c576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680638da5cb5b14610051578063f2fde38b146100a6575b600080fd5b341561005c57600080fd5b6100646100f7565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b34156100b157600080fd5b6100dd600480803573ffffffffffffffffffffffffffffffffffffffff1690602001909190505061011c565b604051808215151515815260200191505060405180910390f35b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614151561017957600080fd5b600073ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff16141515156101b557600080fd5b816000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055508173ffffffffffffffffffffffffffffffffffffffff166000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e060405160405180910390a3600190509190505600a165627a7a72305820d7819bf19b959ea8ad7cc6bd6727c7da0c8cafe480bf9f018dc83bcc00b735a90029",
+  "sourceMap": "205:112:2:-;;;274:39;;;;;;;;599:10:4;591:5;;:18;;;;;;;;;;;;;;;;;;205:112:2;;;;;;",
+  "deployedSourceMap": "205:112:2:-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;328:20:4;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;924:201;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;328:20;;;;;;;;;;;;;:::o;924:201::-;995:4;744:5;;;;;;;;;;;730:19;;:10;:19;;;722:28;;;;;;;;1035:1;1015:22;;:8;:22;;;;1007:31;;;;;;;;1052:8;1044:5;;:16;;;;;;;;;;;;;;;;;;1094:8;1066:37;;1087:5;;;;;;;;;;;1066:37;;;;;;;;;;;;1116:4;1109:11;;924:201;;;:::o",
   "source": "pragma solidity 0.4.18;\n\nimport '../ownership/Ownable.sol';\nimport '../math/SafeMath.sol';\nimport '../token/ERC20.sol';\n\n/**\n * @title Whitelist\n * @dev This contract is a whitelist for the tokensale\n */\n\ncontract Whitelist is Ownable {\n    using SafeMath for uint256;\n\n    function Whitelist() public {\n   \n    }\n\n\n}",
   "sourcePath": "/Users/kevinleyssens/Documents/Projecten/presale_identify/contracts/crowdsale/Whitelist.sol",
   "ast": {
@@ -64,7 +69,7 @@
       "absolutePath": "/Users/kevinleyssens/Documents/Projecten/presale_identify/contracts/crowdsale/Whitelist.sol",
       "exportedSymbols": {
         "Whitelist": [
-          319
+          418
         ]
       }
     },
@@ -77,69 +82,69 @@
             ".18"
           ]
         },
-        "id": 306,
+        "id": 405,
         "name": "PragmaDirective",
-        "src": "0:23:1"
+        "src": "0:23:2"
       },
       {
         "attributes": {
-          "SourceUnit": 471,
+          "SourceUnit": 574,
           "absolutePath": "/Users/kevinleyssens/Documents/Projecten/presale_identify/contracts/ownership/Ownable.sol",
           "file": "../ownership/Ownable.sol",
-          "scope": 320,
+          "scope": 419,
           "symbolAliases": [
             null
           ],
           "unitAlias": ""
         },
-        "id": 307,
+        "id": 406,
         "name": "ImportDirective",
-        "src": "25:34:1"
+        "src": "25:34:2"
       },
       {
         "attributes": {
-          "SourceUnit": 415,
+          "SourceUnit": 514,
           "absolutePath": "/Users/kevinleyssens/Documents/Projecten/presale_identify/contracts/math/SafeMath.sol",
           "file": "../math/SafeMath.sol",
-          "scope": 320,
+          "scope": 419,
           "symbolAliases": [
             null
           ],
           "unitAlias": ""
         },
-        "id": 308,
+        "id": 407,
         "name": "ImportDirective",
-        "src": "60:30:1"
+        "src": "60:30:2"
       },
       {
         "attributes": {
-          "SourceUnit": 1019,
+          "SourceUnit": 1170,
           "absolutePath": "/Users/kevinleyssens/Documents/Projecten/presale_identify/contracts/token/ERC20.sol",
           "file": "../token/ERC20.sol",
-          "scope": 320,
+          "scope": 419,
           "symbolAliases": [
             null
           ],
           "unitAlias": ""
         },
-        "id": 309,
+        "id": 408,
         "name": "ImportDirective",
-        "src": "91:28:1"
+        "src": "91:28:2"
       },
       {
         "attributes": {
           "contractDependencies": [
-            470
+            573
           ],
           "contractKind": "contract",
           "documentation": "@title Whitelist\n@dev This contract is a whitelist for the tokensale",
           "fullyImplemented": true,
           "linearizedBaseContracts": [
-            319,
-            470
+            418,
+            573
           ],
           "name": "Whitelist",
-          "scope": 320
+          "scope": 419
         },
         "children": [
           {
@@ -153,17 +158,17 @@
                 "attributes": {
                   "contractScope": null,
                   "name": "Ownable",
-                  "referencedDeclaration": 470,
+                  "referencedDeclaration": 573,
                   "type": "contract Ownable"
                 },
-                "id": 310,
+                "id": 409,
                 "name": "UserDefinedTypeName",
-                "src": "227:7:1"
+                "src": "227:7:2"
               }
             ],
-            "id": 311,
+            "id": 410,
             "name": "InheritanceSpecifier",
-            "src": "227:7:1"
+            "src": "227:7:2"
           },
           {
             "children": [
@@ -171,26 +176,26 @@
                 "attributes": {
                   "contractScope": null,
                   "name": "SafeMath",
-                  "referencedDeclaration": 414,
+                  "referencedDeclaration": 513,
                   "type": "library SafeMath"
                 },
-                "id": 312,
+                "id": 411,
                 "name": "UserDefinedTypeName",
-                "src": "247:8:1"
+                "src": "247:8:2"
               },
               {
                 "attributes": {
                   "name": "uint256",
                   "type": "uint256"
                 },
-                "id": 313,
+                "id": 412,
                 "name": "ElementaryTypeName",
-                "src": "260:7:1"
+                "src": "260:7:2"
               }
             ],
-            "id": 314,
+            "id": 413,
             "name": "UsingForDirective",
-            "src": "241:27:1"
+            "src": "241:27:2"
           },
           {
             "attributes": {
@@ -202,7 +207,7 @@
               ],
               "name": "Whitelist",
               "payable": false,
-              "scope": 319,
+              "scope": 418,
               "stateMutability": "nonpayable",
               "superFunction": null,
               "visibility": "public"
@@ -215,9 +220,9 @@
                   ]
                 },
                 "children": [],
-                "id": 315,
+                "id": 414,
                 "name": "ParameterList",
-                "src": "292:2:1"
+                "src": "292:2:2"
               },
               {
                 "attributes": {
@@ -226,9 +231,9 @@
                   ]
                 },
                 "children": [],
-                "id": 316,
+                "id": 415,
                 "name": "ParameterList",
-                "src": "302:0:1"
+                "src": "302:0:2"
               },
               {
                 "attributes": {
@@ -237,24 +242,24 @@
                   ]
                 },
                 "children": [],
-                "id": 317,
+                "id": 416,
                 "name": "Block",
-                "src": "302:11:1"
+                "src": "302:11:2"
               }
             ],
-            "id": 318,
+            "id": 417,
             "name": "FunctionDefinition",
-            "src": "274:39:1"
+            "src": "274:39:2"
           }
         ],
-        "id": 319,
+        "id": 418,
         "name": "ContractDefinition",
-        "src": "205:112:1"
+        "src": "205:112:2"
       }
     ],
-    "id": 320,
+    "id": 419,
     "name": "SourceUnit",
-    "src": "0:317:1"
+    "src": "0:317:2"
   },
   "compiler": {
     "name": "solc",
@@ -262,5 +267,5 @@
   },
   "networks": {},
   "schemaVersion": "1.0.1",
-  "updatedAt": "2018-02-19T15:56:37.074Z"
+  "updatedAt": "2018-02-20T10:34:52.054Z"
 }
