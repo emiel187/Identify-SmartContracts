@@ -19,14 +19,14 @@ contract Identify is CustomToken {
   uint256 public constant INITIAL_SUPPLY = 49253333333 * (10 ** uint256(decimals));
 
   /**
-   * @dev Constructor that gives the token contract all of existing tokens.
+   * @dev Constructor that gives the vault all of existing tokens.
    * Needs to be discussed where to store all tokens when created.
    */
 
-  function Identify() public {
+  function Identify(address vault) public {
     totalSupply = INITIAL_SUPPLY;
-    balances[this] = INITIAL_SUPPLY;
-    Transfer(0x0, this, INITIAL_SUPPLY);
+    balances[vault] = INITIAL_SUPPLY;
+    Transfer(0x0, vault, INITIAL_SUPPLY);
   }
 
 }
