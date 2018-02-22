@@ -1,14 +1,12 @@
 // Tests are tested with TestRPC.
 // @author Kevin Leyssens - <kevin.leyssens@theledger.be>
 
-var Vault = artifacts.require("Vault");
 var Identify = artifacts.require("Identify");
 var MultiSigWallet = artifacts.require("MultiSigWallet");
 var Presale = artifacts.require("Presale");
 
 
 contract('TokenSale', function(accounts) {
-  var metaVault;
   var metaMultiSig;
   var metaIdentify;
   var metaPresale;
@@ -20,7 +18,6 @@ contract('TokenSale', function(accounts) {
 
 
   before(async function(){
-    metaVault = await Vault.deployed();
     metaMultiSig = await MultiSigWallet.deployed();
     metaIdentify = await Identify.deployed();
     metaPresale = await Presale.deployed();
@@ -29,7 +26,7 @@ contract('TokenSale', function(accounts) {
 
    it('Should be able to use the constructor', function(done) {
     var starttime = Math.round((Date.now()/1000)+300)
-      Presale.new(starttime, "0x20c721b0262bd9341c0a7ec685768cb3d33eadfb", "0x20c721b0262bd9341c0a7ec685768cb3d33eadfb","0x20c721b0262bd9341c0a7ec685768cb3d33eadfb").then(
+      Presale.new(starttime, "0x20c721b0262bd9341c0a7ec685768cb3d33eadfb","0x20c721b0262bd9341c0a7ec685768cb3d33eadfb").then(
          function(tokensale) {
             tokensale.startTime.call().then(
                function(startTime) {

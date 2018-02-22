@@ -23,10 +23,10 @@ contract Identify is CustomToken {
    * Needs to be discussed where to store all tokens when created.
    */
 
-  function Identify(address vault) public {
+  function Identify() public {
     totalSupply = INITIAL_SUPPLY;
-    balances[vault] = INITIAL_SUPPLY;
-    Transfer(0x0, vault, INITIAL_SUPPLY);
+    balances[this] = INITIAL_SUPPLY;
+    Transfer(0x0, this, INITIAL_SUPPLY);
   }
 
 }

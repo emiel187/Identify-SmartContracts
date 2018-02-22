@@ -21,6 +21,7 @@ contract Presale is Ownable {
 
   // The token being sold
   Identify public token;
+  address public tokenAdress;
 
   // start and end timestamps where investments are allowed (both inclusive)
   uint256 public startTime;
@@ -28,9 +29,6 @@ contract Presale is Ownable {
 
   // address where funds are collected
   address public wallet;
-
-  // address where all tokens are stored
-  address public vault;
 
   // how many token units a buyer gets per ETH
   uint256 public rate = 4200000;
@@ -59,7 +57,7 @@ contract Presale is Ownable {
   event TokenPurchase(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
 
 
-  function Presale(uint256 _startTime, address _wallet, address _vault, address _token) public 
+  function Presale(uint256 _startTime, address _wallet, address _token) public 
   {
     require(_startTime >= now);
     require(_wallet != address(0));
@@ -68,8 +66,8 @@ contract Presale is Ownable {
     startTime = _startTime;
     endTime = _startTime.add(10 weeks);
     wallet = _wallet;
+    tokenAdress = _token;
     token = Identify(_token);
-    vault = _vault;
   }
 
   // fallback function can be used to buy tokens
@@ -94,7 +92,7 @@ contract Presale is Ownable {
     weiRaised = weiRaised.add(weiAmount);
     tokenRaised = tokenRaised.add(tokens);
 
-    require(token.transferFrom(vault, beneficiary, tokens));
+    require(token.transferFrom(tokenAdress, beneficiary, tokens));
     TokenPurchase(msg.sender, beneficiary, weiAmount, tokens);
 
     forwardFunds();
