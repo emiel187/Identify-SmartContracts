@@ -276,7 +276,6 @@ it("Should not transfer ownership when not owner of contract", function() {
 
     return Identify.deployed().then(function(instance) {
         meta = instance;
-        // return meta.owner.call()
         return meta.transferOwnership(account_two, {from: account_two, gas: 3000000}); 
     }).then(function(){
         inThen = true;
@@ -290,9 +289,152 @@ it("Should not transfer ownership when not owner of contract", function() {
     })
     ;
 });
-// test approve
+// test approve / allow
 
-// test approve and call
+it("Should approve succesfull tokens and let the approver spend them", function() {
+    
+
+    return Identify.deployed().then(function(instance) {
+        meta = instance;
+        // account_two has 10000000000 tokens, account_empty 0
+        return meta.approve(account_empty,200,{from: account_two}); 
+    }).then(function(){
+        return meta.transferFrom(account_two,account_one, 100,{from: account_empty});
+    }).then(function(){
+        return meta.balanceOf(account_one);
+    }).then(function(balance){
+        return assert.equal(balance.toNumber(),account_one_start_balance + 100, "Should added 100 to account_one");
+    }).then(function(){
+        return meta.balanceOf(account_two);
+    }).then(function(balance){
+        return assert.equal(balance.toNumber(),account_two_start_balance - 100, "Should substracted 100 of account_two");
+    })
+    ;
+});
+
+it("Should not spend more than approved", function() {
+    var inThen = false;
+
+    return Identify.deployed().then(function(instance) {
+        meta = instance;
+        // account_empty still has 100 to spend
+        return meta.transferFrom(account_two,account_one, 101,{from: account_empty});
+    }).then(function(){
+        inThen = true;
+        assert.ok(false,"Should fail")
+    }).catch(function(err){
+        if(inThen){
+            assert.ok(false,"Should have failed because cannot spend more than approved");
+        }else{
+            assert.ok(true,"Failed successfull");
+        }
+    }).then(function(){
+        // transfer remaining 100
+        return meta.transferFrom(account_two,account_one, 100,{from: account_empty});        
+    }).then(function(){
+        return meta.balanceOf(account_one);
+    }).then(function(balance){
+        return assert.equal(balance.toNumber(),account_one_start_balance + 100, "Should added 100 to account_one");
+    }).then(function(){
+        return meta.balanceOf(account_two);
+    }).then(function(balance){
+        return assert.equal(balance.toNumber(),account_two_start_balance - 100, "Should substracted 100 of account_two");
+    })
+    ;
+});
+
+// test already approved to increase approval
+
+it("Should fail when overwriting approval", function() {
+    var inThen = false;
+
+    return Identify.deployed().then(function(instance) {
+        meta = instance;
+        return meta.approve(account_empty,200,{from: account_two}); 
+    }).then(function(){
+        return meta.approve(account_empty,200,{from: account_two}); 
+    }).then(function(){
+        inThen = true;
+        assert.ok(false,"Should fail")
+    }).catch(function(err){
+        if(inThen){
+            assert.ok(false,"Should have failed because already an approved amount");
+        }else{
+            assert.ok(true,"Failed successfull");
+        }
+    })
+    ;
+});
+
+it("Should increase correclty", function() {
+    var inThen = false;
+
+    return Identify.deployed().then(function(instance) {
+        meta = instance;
+        // already has 200 approved from function above
+        return meta.increaseApproval(account_empty,100,{from: account_two}); 
+    }).then(function(){
+        return meta.transferFrom(account_two,account_one, 300,{from: account_empty});        
+    }).then(function(){
+        return meta.balanceOf(account_one);
+    }).then(function(balance){
+        return assert.equal(balance.toNumber(),account_one_start_balance + 300, "Should added 300 to account_one");
+    }).then(function(){
+        return meta.balanceOf(account_two);
+    }).then(function(balance){
+        return assert.equal(balance.toNumber(),account_two_start_balance - 300, "Should substracted 300 of account_two");
+    })
+    ;
+});
+
+it("Should decrease correclty", function() {
+    var inThen = false;
+
+    return Identify.deployed().then(function(instance) {
+        meta = instance;
+        return meta.approve(account_empty,200,{from: account_two}); 
+    }).then(function(){
+        return meta.decreaseApproval(account_empty,100,{from: account_two}); 
+    }).then(function(){
+        return meta.allowance.call(account_two,account_empty);
+    }).then(function(spendAmount){
+        return assert.equal(spendAmount.toNumber(),100, "Should decreased to 100");
+    })
+    ;
+});
+
+it("Should use the approveandcall method", function() {
+
+    return Identify.deployed().then(function(instance) {
+        meta = instance;
+        return meta.approveAndCall(account_one, 150, "extradata",{from: account_two}); 
+    }).then(function(){
+        return meta.allowance.call(account_two,account_one);
+    }).then(function(spendAmount){
+        return assert.equal(spendAmount.toNumber(),150, "Should be 150");
+    })
+    ;
+});
+
+it("Should fail when already approved through approveandcall method", function() {
+    var inThen = false;
+
+    return Identify.deployed().then(function(instance) {
+        meta = instance;
+        return meta.approveAndCall(account_one, 150, "extradata",{from: account_two}); 
+    }).then(function(){
+        inThen = true;
+        assert.ok(false,"Should fail")
+    }).catch(function(err){
+        if(inThen){
+            assert.ok(false,"Should have failed because already an approved amount");
+        }else{
+            assert.ok(true,"Failed successfull");
+        }
+    })
+    ;
+});
+
 
 it("Should transfer ownership when owner of contract", function() {
     var old_owner;
