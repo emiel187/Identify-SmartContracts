@@ -96,6 +96,9 @@ contract CustomToken is ERC20, BasicToken, Ownable {
 
   /* Approves and then calls the receiving contract */
   function approveAndCall(address _spender, uint256 _value, bytes _extraData) public returns (bool success) {
+    // check if the _spender already has some amount approved else use increase approval.
+    require((_value == 0) || (allowed[msg.sender][_spender] == 0));
+
     allowed[msg.sender][_spender] = _value;
     Approval(msg.sender, _spender, _value);
 
