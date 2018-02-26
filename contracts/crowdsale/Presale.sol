@@ -41,11 +41,11 @@ contract Presale is Ownable {
   uint256 public tokenRaised;
 
   // All parameters
-  uint256 public capWEI = 8695 * (10 ** uint256(18));
-  uint256 public capTokens = 4565000000 * (10 ** uint256(6));
+  uint256 public capWEI;
+  uint256 public capTokens;
   uint256 public bonusPercentage = 125; // 25% bonus
-  uint256 public minimumWEI = 25 * (10 ** uint256(18));
-  uint256 public maximumWEI = 1000 * (10 ** uint256(18));
+  uint256 public minimumWEI;
+  uint256 public maximumWEI;
   bool public paused = false;
 
   /**
@@ -71,7 +71,7 @@ contract Presale is Ownable {
     _;
   }
 
-  function Presale(uint256 _startTime, address _wallet, address _token) public 
+  function Presale(uint256 _startTime, address _wallet, address _token, uint256 _capWEI, uint256 _capTokens, uint256 _minimumETH, uint256 _maximumETH) public 
   {
     require(_startTime >= now);
     require(_wallet != address(0));
@@ -82,6 +82,10 @@ contract Presale is Ownable {
     wallet = _wallet;
     tokenAdress = _token;
     token = Identify(_token);
+    capWEI = _capWEI * (10 ** uint256(18));
+    capTokens = _capTokens * (10 ** uint256(6));
+    minimumWEI = _minimumETH * (10 ** uint256(18));
+    maximumWEI = _maximumETH * (10 ** uint256(18));
   }
 
   // fallback function can be used to buy tokens
