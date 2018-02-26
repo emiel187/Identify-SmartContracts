@@ -2,3 +2,5 @@
 1.  Als de tokens in het token contract zitten bij deployment. 
     Is de approveAndCall methode mogelijk op te roepen met als sender het contract?
 2. Is er een start of end date voor de whitelist
+3. Admin mag andere admins maken of alleen owner
+4. Alleen admin kan mensen toevoegen
