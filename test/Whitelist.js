@@ -301,7 +301,7 @@ contract('Whitelist', function(accounts) {
 
 
     // test fallback function
-    it("Should register with fallback function and transfer ether back", function() {
+    it("Should transfer ether back", function() {
         var account_eight_balance;
 
         return Whitelist.deployed().then(function(instance) {

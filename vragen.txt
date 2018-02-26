@@ -4,3 +4,4 @@
 2. Is er een start of end date voor de whitelist
 3. Admin mag andere admins maken of alleen owner
 4. Alleen admin kan mensen toevoegen
+5. Kan de whitelist finalized zijn

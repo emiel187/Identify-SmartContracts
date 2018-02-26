@@ -22,10 +22,10 @@ contract Whitelist is Ownable {
     event Resumed(address _owner, uint256 _time);
     event Finalized(address _owner, uint256 _time);
 
-    modifier notFinalized() {
-        require(!finalized);
-        _;
-    }
+    // modifier notFinalized() {
+    //     require(!finalized);
+    //     _;
+    // }
 
     modifier notPaused() {
         require(!paused);
@@ -46,11 +46,12 @@ contract Whitelist is Ownable {
         addAdmin(msg.sender);
     }
 
-    function addSelfAsParticipant() public {
+    function addSelfAsParticipant() public returns (bool) {
         require(addParticipant(msg.sender));
+        return true;
     }
 
-    function addParticipant(address _participant) public notPaused onlyAdmin notFinalized returns (bool) {
+    function addParticipant(address _participant) public notPaused onlyAdmin returns (bool) {
         require(address(_participant) != 0);
         require(isParticipant[_participant] == false);
 
@@ -61,7 +62,7 @@ contract Whitelist is Ownable {
         return true;
     }
 
-    function removeParticipant(address _participant) public notPaused onlyAdmin notFinalized returns (bool) {
+    function removeParticipant(address _participant) public onlyAdmin  returns (bool) {
         require(address(_participant) != 0);
         require(isParticipant[_participant] == true);
         require(msg.sender != _participant);
@@ -73,7 +74,7 @@ contract Whitelist is Ownable {
         return true;
     }
 
-    function addAdmin(address _admin) public notPaused onlyOwner notFinalized returns (bool) {
+    function addAdmin(address _admin) public notPaused onlyOwner returns (bool) {
         require(address(_admin) != 0);
         require(!isAdmin[_admin]);
 
@@ -84,7 +85,7 @@ contract Whitelist is Ownable {
         return true;
     }
 
-    function removeAdmin(address _admin) public notPaused onlyOwner notFinalized returns (bool) {
+    function removeAdmin(address _admin) public onlyOwner returns (bool) {
         require(address(_admin) != 0);
         require(isAdmin[_admin] == true);
         require(msg.sender != _admin);
@@ -114,20 +115,20 @@ contract Whitelist is Ownable {
     }
 
     // @notice Pauses the whitelist if there is any issue
-    function pauseWhitelist() public onlyOwner notFinalized returns (bool) {
+    function pauseWhitelist() public onlyOwner returns (bool) {
         paused = true;
         Paused(owner,now);
         return true;
     }
 
     // @notice Resumes the Whitelist
-    function resumeWhitelist() public onlyOwner notFinalized returns (bool) {
+    function resumeWhitelist() public onlyOwner returns (bool) {
         paused = false;
         Resumed(owner,now);
         return true;
     }
 
-    function finzalize() public notFinalized onlyOwner returns (bool) {
+    function finzalize() public onlyOwner returns (bool) {
         finalized = true;
         Finalized(owner,now);
         return true;
