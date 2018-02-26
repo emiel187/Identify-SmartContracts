@@ -84,7 +84,7 @@ contract('TokenSale', function (accounts) {
         });
     });
 
-    it('Should not buy tokens when paused', function () {
+    /*it('Should not buy tokens when paused', function () {
 
         return Presale.deployed().then(function (instance) {
             metaPresale = instance;
@@ -92,7 +92,7 @@ contract('TokenSale', function (accounts) {
         }).then(function (balance) {
             return assert.equal(balance.toNumber(), web3.toWei('25', 'ether'), "Should have 25 ETH in the wallet");
         });
-    });
+    });*/
 
     // test pause function
 
