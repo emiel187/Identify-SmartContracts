@@ -9,9 +9,13 @@ module.exports = function(deployer, network) {
         // network local
         deployer.deploy(Presale, 
             Math.round((Date.now()/1000)+ 100), // start
-            Math.round((Date.now()/1000)+ 10000), //end
             Multisig.address, // wallet
-            Identify.address).then(function(){
+            Identify.address,
+            8695, // CAP in ETH
+            4565000000, // CAP in Tokens
+            25, // minimum ETH
+            1000 // maximum ETH
+        ).then(function(){
                 return Identify.deployed().then(function(instance){
                     return instance.transferOwnership(Presale.address);
                 })
@@ -20,9 +24,13 @@ module.exports = function(deployer, network) {
         //testrpc
         deployer.deploy(Presale, 
             Math.round((Date.now()/1000)), // start
-            Math.round((Date.now()/1000)+ 10000), //end
             Multisig.address, // wallet
-            Identify.address).then(function(){
+            Identify.address,
+            8695, // CAP in ETH
+            4565000000, // CAP in Tokens
+            25, // minimum ETH
+            1000 // maximum ETH
+        ).then(function(){
                 return Identify.deployed().then(function(instance){
                     return instance.transferOwnership(Presale.address);
                 })
