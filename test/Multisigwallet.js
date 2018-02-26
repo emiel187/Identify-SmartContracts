@@ -202,7 +202,7 @@ it("Submit transaction + get confirmation count + isconfirmed + revoke confirmat
         ;
     });
 
-    it("Should fail when execting transaction that already is executed", function() {
+    it("Should fail when executing transaction that already is executed", function() {
         var beginTransaction;
         var firstTransaction_count;
         var firstTransaction_id;
@@ -295,7 +295,7 @@ it("Submit transaction + get confirmation count + isconfirmed + revoke confirmat
 
 
         // get Identify token amount
-        it("Should diplay Identify tokens properly", function() {
+        it("Should display Identify tokens properly", function() {
             
         var Identify_start;
 

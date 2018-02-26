@@ -26,8 +26,8 @@ contract CustomToken is ERC20, BasicToken, Ownable {
   }
 
   event Burn(address indexed burner, uint256 value);
-  event EnableTransfer();
-  event DisableTransfer();
+  event EnableTransfer(address indexed owner, uint256 timestamp);
+  event DisableTransfer(address indexed owner, uint256 timestamp);
 
   
   /**
@@ -95,7 +95,7 @@ contract CustomToken is ERC20, BasicToken, Ownable {
 
 
   /* Approves and then calls the receiving contract */
-  function approveAndCall(address _spender, uint256 _value, bytes _extraData) public returns (bool success) {
+  function approveAndCall(address _spender, uint256 _value, bytes _extraData) whenTransferEnabled public returns (bool success) {
     // check if the _spender already has some amount approved else use increase approval.
     require((_value == 0) || (allowed[msg.sender][_spender] == 0));
 
@@ -161,7 +161,7 @@ contract CustomToken is ERC20, BasicToken, Ownable {
    * @dev Burns a specific amount of tokens.
    * @param _value The amount of token to be burned.
    */
-  function burn(address _burner, uint256 _value) whenTransferEnabled onlyOwner public returns (bool) {
+  function burn(address _burner, uint256 _value) onlyOwner public returns (bool) {
     require(_value <= balances[_burner]);
     // no need to require value <= totalSupply, since that would imply the
     // sender's balance is greater than the totalSupply, which *should* be an assertion failure
@@ -176,7 +176,7 @@ contract CustomToken is ERC20, BasicToken, Ownable {
    */
   function enableTransfer() onlyOwner public returns (bool) {
     enableTransfer = true;
-    EnableTransfer();
+    EnableTransfer(owner, now);
     return true;
   }
 
@@ -185,7 +185,7 @@ contract CustomToken is ERC20, BasicToken, Ownable {
    */
   function disableTransfer() onlyOwner whenTransferEnabled public returns (bool) {
     enableTransfer = false;
-    DisableTransfer();
+    DisableTransfer(owner, now);
     return true;
   }
 }
