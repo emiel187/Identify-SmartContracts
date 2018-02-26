@@ -4,6 +4,7 @@ pragma solidity ^0.4.18;
 import '../ownership/Ownable.sol';
 import '../math/SafeMath.sol';
 import '../token/Identify.sol';
+import '../token/ERC20.sol';
 
 
 /**
@@ -40,12 +41,12 @@ contract Presale is Ownable {
   uint256 public tokenRaised;
 
   // All parameters
-  uint256 public capWEI = 8695 * (10 ** uint256(18));
-  uint256 public capTokens = 4565000000 * (10 ** uint256(6));
+  uint256 public capWEI;
+  uint256 public capTokens;
   uint256 public bonusPercentage = 125; // 25% bonus
-  uint256 public minimumWEI = 25 * (10 ** uint256(18));
-  uint256 public maximumWEI = 1000 * (10 ** uint256(18));
-
+  uint256 public minimumWEI;
+  uint256 public maximumWEI;
+  bool public paused = false;
 
   /**
    * event for token purchase logging
@@ -55,19 +56,40 @@ contract Presale is Ownable {
    * @param amount amount of tokens purchased
    */
   event TokenPurchase(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
+  event ClaimedTokens(address indexed _claimtoken, address indexed _owner, uint _amount);
+  event Paused(address indexed owner, uint256 timestamp);
+  event Resumed(address indexed owner, uint256 timestamp);
 
 
-  function Presale(uint256 _startTime, address _wallet, address _token) public 
+  modifier isInWhitelist() {
+    // first check if sender is in whitelist
+    _;
+  }
+
+  modifier whenNotPaused() {
+    require(!paused);
+    _;
+  }
+
+  function Presale(uint256 _startTime, address _wallet, address _token, uint256 _capETH, uint256 _capTokens, uint256 _minimumETH, uint256 _maximumETH) public 
   {
     require(_startTime >= now);
     require(_wallet != address(0));
     require(_token != address(0));
+    require(_capETH > 0);
+    require(_capTokens > 0);
+    require(_minimumETH > 0);
+    require(_maximumETH > 0);
 
     startTime = _startTime;
     endTime = _startTime.add(10 weeks);
     wallet = _wallet;
     tokenAdress = _token;
     token = Identify(_token);
+    capWEI = _capETH * (10 ** uint256(18));
+    capTokens = _capTokens * (10 ** uint256(6));
+    minimumWEI = _minimumETH * (10 ** uint256(18));
+    maximumWEI = _maximumETH * (10 ** uint256(18));
   }
 
   // fallback function can be used to buy tokens
@@ -77,7 +99,7 @@ contract Presale is Ownable {
   }
 
   // low level token purchase function
-  function buyTokens(address beneficiary) public payable returns (bool) {
+  function buyTokens(address beneficiary) isInWhitelist whenNotPaused public payable returns (bool) {
     require(beneficiary != address(0));
     require(validPurchase());
     require(!hasEnded());
@@ -125,30 +147,64 @@ contract Presale is Ownable {
   function validPurchase() internal view returns (bool) {
     bool withinPeriod = now >= startTime && now <= endTime;
     bool nonZeroPurchase = msg.value != 0;
-    bool minimumReached = msg.value >= minimumWEI;
-    bool maximumReached = msg.value <= maximumWEI;
+    bool minimumWEIReached = msg.value >= minimumWEI;
+    bool underMaximumWEI = msg.value <= maximumWEI;
     bool withinCap = weiRaised.add(msg.value) <= capWEI;
-    return (withinPeriod && nonZeroPurchase) && (withinCap && (minimumReached && maximumReached));
+    return (withinPeriod && nonZeroPurchase) && (withinCap && (minimumWEIReached && underMaximumWEI));
 
   }
 
-  /// @dev Internal function to determine if an address is a contract
-  /// @param _addr The address being queried
-  /// @return True if `_addr` is a contract
-  function isContract(address _addr) constant internal returns (bool) {
-    if (_addr == 0) {
-       return false;
-    }
-    uint256 size;
-    assembly {
-        size := extcodesize(_addr)
-     }
-      return (size > 0);
-  }
 
   function transferOwnershipToken(address _newOwner) onlyOwner public returns (bool) {
     require(token.transferOwnership(_newOwner));
     return true;
   }
+
+  ////////////////////////
+  /// SAFETY FUNCTIONS ///
+  ////////////////////////
+
+  /// @dev Internal function to determine if an address is a contract
+  /// @param _addr The address being queried
+  /// @return True if `_addr` is a contract
+  function isContract(address _addr) constant internal returns (bool) {
+    if (_addr == 0) { return false; }
+    uint256 size;
+    assembly {
+        size := extcodesize(_addr)
+     }
+    return (size > 0);
+  }
+
+    /// @notice This method can be used by the controller (woner) to extract mistakenly sent tokens to this contract.
+    /// @param _claimtoken The address of the token contract that you want to recover
+    ///  set to 0 in case you want to extract ether.
+  function claimTokens(address _claimtoken) onlyOwner public returns (bool) {
+    if (_claimtoken == 0x0) {
+      owner.transfer(this.balance);
+      return true;
+    }
+
+    ERC20 claimtoken = ERC20(_claimtoken);
+    uint balance = claimtoken.balanceOf(this);
+    claimtoken.transfer(owner, balance);
+    ClaimedTokens(_claimtoken, owner, balance);
+    return true;
+  }
+
+  // @notice Pauses the presale if there is any issue
+  function pausePresale() onlyOwner public returns (bool) {
+    paused = true;
+    Paused(owner, now);
+    return true;
+  }
+
+  // @notice Resumes the Presale
+  function resumePresale() onlyOwner public returns (bool) {
+    paused = false;
+    Resumed(owner, now);
+    return true;
+  }
+
 
 }
