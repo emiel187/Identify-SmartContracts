@@ -71,18 +71,22 @@ contract Presale is Ownable {
     _;
   }
 
-  function Presale(uint256 _startTime, address _wallet, address _token, uint256 _capWEI, uint256 _capTokens, uint256 _minimumETH, uint256 _maximumETH) public 
+  function Presale(uint256 _startTime, address _wallet, address _token, uint256 _capETH, uint256 _capTokens, uint256 _minimumETH, uint256 _maximumETH) public 
   {
     require(_startTime >= now);
     require(_wallet != address(0));
     require(_token != address(0));
+    require(_capETH > 0);
+    require(_capTokens > 0);
+    require(_minimumETH > 0);
+    require(_maximumETH > 0);
 
     startTime = _startTime;
     endTime = _startTime.add(10 weeks);
     wallet = _wallet;
     tokenAdress = _token;
     token = Identify(_token);
-    capWEI = _capWEI * (10 ** uint256(18));
+    capWEI = _capETH * (10 ** uint256(18));
     capTokens = _capTokens * (10 ** uint256(6));
     minimumWEI = _minimumETH * (10 ** uint256(18));
     maximumWEI = _maximumETH * (10 ** uint256(18));
