@@ -26,8 +26,8 @@ contract('TokenSale', function (accounts) {
 
     it('Should be able to use the constructor', function (done) {
         var starttime = Math.round((Date.now() / 1000) + 300)
-        Presale.new(starttime, "0x20c721b0262bd9341c0a7ec685768cb3d33eadfb", "0x20c721b0262bd9341c0a7ec685768cb3d33eadfb",8695,
-        4565000000, 25, 1000).then(
+        Presale.new(starttime, "0x20c721b0262bd9341c0a7ec685768cb3d33eadfb", "0x20c721b0262bd9341c0a7ec685768cb3d33eadfb", 8695,
+            4565000000, 25, 1000).then(
             function (tokensale) {
                 tokensale.startTime.call().then(
                     function (startTime) {
@@ -46,9 +46,19 @@ contract('TokenSale', function (accounts) {
             metaIdentify = instance;
             return metaIdentify.owner.call();
         }).then(function (owner) {
-            assert.equal(owner, Presale.address, "Should be presale");
-        })
-            ;
+            return assert.equal(owner, Presale.address, "Should be presale");
+        });
+    });
+
+
+    it('Should have 0 ETH in the wallet', function () {
+
+        return MultiSigWallet.deployed().then(function (instance) {
+            metaMultiSig = instance;
+            return web3.eth.getBalance(metaMultiSig.address);
+        }).then(function (balance) {
+            return assert.equal(balance.toNumber(), 0, "Should have 0 ETH in the wallet");
+        });
     });
 
 
@@ -64,23 +74,41 @@ contract('TokenSale', function (accounts) {
         });
     });
 
-    // test minimum wei
+    it('Should have 25 ETH in the wallet after a valid purchase of 25 ETH', function () {
 
-    // test maximum wei
+        return MultiSigWallet.deployed().then(function (instance) {
+            metaMultiSig = instance;
+            return web3.eth.getBalance(metaMultiSig.address);
+        }).then(function (balance) {
+            return assert.equal(balance.toNumber(), web3.toWei('25', 'ether'), "Should have 25 ETH in the wallet");
+        });
+    });
 
-    // test maximum cap of tokens
+    it('Should not buy tokens when paused', function () {
 
-    // test maximum cap op wei
+        return Presale.deployed().then(function (instance) {
+            metaPresale = instance;
+            return metaPresale.pausePresale();
+        }).then(function (balance) {
+            return assert.equal(balance.toNumber(), web3.toWei('25', 'ether'), "Should have 25 ETH in the wallet");
+        });
+    });
 
     // test pause function
 
     // test claimTokens
 
+    // test minimum wei from sender
+
+    // test maximum wei from sender
+
+    // test maximum cap of tokens
+
+    // test maximum cap op wei
+
     // test iscontract function
 
     // test valid purchase (start and endtime)
-
-    // test forward funds
 
     // test in whitelist
 
