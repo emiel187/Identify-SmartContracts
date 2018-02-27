@@ -557,4 +557,13 @@ it("Submit transaction + get confirmation count + isconfirmed + revoke confirmat
         ;
     });
 
+
+
+
+    // test getTransactionIds
+
+    // test getTransactionCount
+
+    // test notNull modifier
+
 });    
