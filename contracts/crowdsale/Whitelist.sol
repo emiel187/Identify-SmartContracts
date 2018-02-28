@@ -13,7 +13,7 @@ contract Whitelist is Ownable {
     uint256 public participantAmount;
     uint256 private adminAmount;
 
-    mapping (address => bool) private isParticipant;
+    mapping (address => bool) public isParticipant;
     mapping (address => bool) public isAdmin;
 
     event AddParticipant(address _participant);
@@ -46,9 +46,14 @@ contract Whitelist is Ownable {
         addAdmin(msg.sender);
     }
 
-    function addSelfAsParticipant() public returns (bool) {
+    function addSelfAsParticipant() onlyAdmin public returns (bool) {
         require(addParticipant(msg.sender));
         return true;
+    }
+
+    function isParticipant(address _participant) public view returns (bool) {
+        require(address(_participant) != 0);
+        return isParticipant[_participant];
     }
 
     function addParticipant(address _participant) public notPaused onlyAdmin returns (bool) {

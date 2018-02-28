@@ -2,6 +2,7 @@
 var Multisig = artifacts.require('./vault/MultiSigWallet.sol');
 var Presale = artifacts.require('./crowdsale/Presale.sol');
 var Identify = artifacts.require('./token/Identify.sol');
+var Whitelist = artifacts.require('./crowdsale/Whitelist.sol');
 
 module.exports = function(deployer, network) {
 
@@ -11,6 +12,7 @@ module.exports = function(deployer, network) {
             Math.round((Date.now()/1000)+ 100), // start
             Multisig.address, // wallet
             Identify.address,
+            Whitelist.address,
             8695, // CAP in ETH
             4565000000, // CAP in Tokens
             25, // minimum ETH
@@ -26,6 +28,7 @@ module.exports = function(deployer, network) {
             Math.round((Date.now()/1000)), // start
             Multisig.address, // wallet
             Identify.address,
+            Whitelist.address,
             8695, // CAP in ETH
             4565000000, // CAP in Tokens
             25, // minimum ETH

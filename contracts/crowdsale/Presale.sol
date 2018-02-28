@@ -5,6 +5,7 @@ import '../ownership/Ownable.sol';
 import '../math/SafeMath.sol';
 import '../token/Identify.sol';
 import '../token/ERC20.sol';
+import '../crowdsale/Whitelist.sol';
 
 
 /**
@@ -30,6 +31,10 @@ contract Presale is Ownable {
 
   // address where funds are collected
   address public wallet;
+
+  // address from the Whitelist
+  Whitelist public whitelist;
+  address public whitelistAddress;
 
   // how many token units a buyer gets per ETH
   uint256 public rate = 4200000;
@@ -63,6 +68,7 @@ contract Presale is Ownable {
 
   modifier isInWhitelist() {
     // first check if sender is in whitelist
+    require(whitelist.isParticipant(msg.sender));
     _;
   }
 
@@ -71,11 +77,12 @@ contract Presale is Ownable {
     _;
   }
 
-  function Presale(uint256 _startTime, address _wallet, address _token, uint256 _capETH, uint256 _capTokens, uint256 _minimumETH, uint256 _maximumETH) public 
+  function Presale(uint256 _startTime, address _wallet, address _token, address _whitelist, uint256 _capETH, uint256 _capTokens, uint256 _minimumETH, uint256 _maximumETH) public 
   {
     require(_startTime >= now);
     require(_wallet != address(0));
     require(_token != address(0));
+    require(_whitelist != address(0));
     require(_capETH > 0);
     require(_capTokens > 0);
     require(_minimumETH > 0);
@@ -86,6 +93,8 @@ contract Presale is Ownable {
     wallet = _wallet;
     tokenAdress = _token;
     token = Identify(_token);
+    whitelistAddress = _whitelist;
+    whitelist = Whitelist(_whitelist);
     capWEI = _capETH * (10 ** uint256(18));
     capTokens = _capTokens * (10 ** uint256(6));
     minimumWEI = _minimumETH * (10 ** uint256(18));
@@ -176,7 +185,7 @@ contract Presale is Ownable {
     return (size > 0);
   }
 
-    /// @notice This method can be used by the controller (woner) to extract mistakenly sent tokens to this contract.
+    /// @notice This method can be used by the controller (owner) to extract mistakenly sent tokens to this contract.
     /// @param _claimtoken The address of the token contract that you want to recover
     ///  set to 0 in case you want to extract ether.
   function claimTokens(address _claimtoken) onlyOwner public returns (bool) {
