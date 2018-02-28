@@ -162,8 +162,9 @@ contract MultiSigWallet {
             }
         }
         owners.length -= 1;
-        if (required > owners.length)
+        if (required > owners.length) {
             changeRequirement(owners.length);
+        }
         OwnerRemoval(owner);
         return true;
     }
@@ -178,7 +179,7 @@ contract MultiSigWallet {
         ownerDoesNotExist(newOwner)
         returns (bool)
     {
-        for (uint i=0; i<owners.length; i++) {
+        for (uint i = 0; i < owners.length; i++) {
             if (owners[i] == owner) {
                 owners[i] = newOwner;
                 break;
@@ -271,15 +272,17 @@ contract MultiSigWallet {
     /// @return Confirmation status.
     function isConfirmed(uint transactionId)
         public
-        constant
+        view
         returns (bool)
     {
         uint count = 0;
         for (uint i = 0; i < owners.length; i++) {
-            if (confirmations[transactionId][owners[i]])
+            if (confirmations[transactionId][owners[i]]) {
                 count += 1;
-            if (count == required)
+            }
+            if (count == required) {
                 return true;
+            }
         }
     }
 
@@ -315,7 +318,7 @@ contract MultiSigWallet {
     /// @return Number of confirmations.
     function getConfirmationCount(uint transactionId)
         public
-        constant
+        view
         returns (uint count)
     {
         for (uint i = 0; i < owners.length; i++) {
@@ -331,7 +334,7 @@ contract MultiSigWallet {
     /// @return Total number of transactions after filters are applied.
     function getTransactionCount(bool pending, bool executed)
         public
-        constant
+        view
         returns (uint count)
     {
         for (uint i = 0; i < transactionCount; i++) {
@@ -345,7 +348,7 @@ contract MultiSigWallet {
     /// @return List of owner addresses.
     function getOwners()
         public
-        constant
+        view
         returns (address[])
     {
         return owners;
@@ -356,7 +359,7 @@ contract MultiSigWallet {
     /// @return Returns array of owner addresses.
     function getConfirmations(uint transactionId)
         public
-        constant
+        view
         returns (address[] _confirmations)
     {
         address[] memory confirmationsTemp = new address[](owners.length);
@@ -382,7 +385,7 @@ contract MultiSigWallet {
     /// @return Returns array of transaction IDs.
     function getTransactionIds(uint from, uint to, bool pending, bool executed)
         public
-        constant
+        view
         returns (uint[] _transactionIds)
     {
         uint[] memory transactionIdsTemp = new uint[](transactionCount);
@@ -401,7 +404,7 @@ contract MultiSigWallet {
     }
 
 
-     function getIdentifyAmount() public view returns (uint256 balance) {
+     function getIdentifyAmount() public view returns (uint) {
         return token.balanceOf(this);
     }
 
