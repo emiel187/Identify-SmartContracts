@@ -28,8 +28,8 @@ contract('Presale', function (accounts) {
 
 
     it('Should be able to use the constructor', function (done) {
-        var starttime = Math.round((Date.now() / 1000) + 300)
-        Presale.new(starttime, "0x20c721b0262bd9341c0a7ec685768cb3d33eadfb", metaIdentify.address, metaWhitelist.address, 12,
+        var starttime = Math.round((Date.now() / 1000))
+        Presale.new(starttime, metaMultiSig.address, metaIdentify.address, metaWhitelist.address, 12,
             4565000, 1, 10).then(
             function (presale) {
                 metaPresaleV2 = presale;
@@ -177,9 +177,8 @@ contract('Presale', function (accounts) {
         return metaWhitelist.addParticipant(accounts[9], { from: account_one, gas: 3000000}).then(function () {   
             return metaWhitelist.isParticipant(accounts[9]);
         }).then(function (isParticipant) {
-            console.log(isParticipant)
             assert.equal(isParticipant, true, "Account should be added as a participant");
-           return metaPresaleV2.sendTransaction({ from: accounts[9], gas: 3000000, value: web3.toWei('10', 'ether') });
+            return metaPresaleV2.sendTransaction({ from: accounts[9], gas: 3000000, value: web3.toWei('10', 'ether') });
         })/*.then(function () {
             return metaIdentify.balanceOf(accounts[9]);
         }).then(function (balance) {
