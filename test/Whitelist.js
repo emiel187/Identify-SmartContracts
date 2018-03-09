@@ -35,7 +35,7 @@ contract('Whitelist', function(accounts) {
         });
 
 
-    // test added successfully
+    /*// test added successfully
     it("Should add self successfully to list", function() {
         return Whitelist.deployed().then(function(instance) {
             meta = instance;
@@ -45,7 +45,7 @@ contract('Whitelist', function(accounts) {
         }).then(function(count){
             assert.equal(count.toNumber(), whitelistCount_start +1, "Should have added 1");
         });
-    });        
+    }); */       
 
     it("Should add other successfully to list", function() {
         return Whitelist.deployed().then(function(instance) {
