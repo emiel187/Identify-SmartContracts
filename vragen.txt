@@ -6,3 +6,7 @@
 3. Admin mag andere admins maken of alleen owner
 4. Alleen admin kan mensen toevoegen
 5. Kan de whitelist finalized zijn
+
+
+1. Wie kan admins toevoegen. Enkel owner of admins?
+2. Wie kan de whitelist pauzeren? Admins of enkel owner?
