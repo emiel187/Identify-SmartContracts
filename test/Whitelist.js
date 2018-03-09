@@ -1,6 +1,6 @@
 // Tests are tested with TestRPC.
 // @author Kevin Leyssens - <kevin.leyssens@theledger.be>; Jeroen De Prest - <jeroen.deprest@theledger.be> 
-// When testing on own network instead of truffles -> unlock accounts 0,1 and 4
+// When testing on own network instead of truffles -> unlock accounts 0, 1, 4, 6, 7 and 8
 
 var Whitelist = artifacts.require("Whitelist");
 
@@ -35,8 +35,8 @@ contract('Whitelist', function(accounts) {
         });
 
 
-    // test added succesfull
-    it("Should add self succesfull to list", function() {
+    // test added successfully
+    it("Should add self successfully to list", function() {
         return Whitelist.deployed().then(function(instance) {
             meta = instance;
             return meta.addSelfAsParticipant();
@@ -47,7 +47,7 @@ contract('Whitelist', function(accounts) {
         });
     });        
 
-    it("Should add other succesfull to list", function() {
+    it("Should add other successfully to list", function() {
         return Whitelist.deployed().then(function(instance) {
             meta = instance;
             return meta.addParticipant(account_two);
@@ -58,7 +58,7 @@ contract('Whitelist', function(accounts) {
         });
     });
 
-    it("Should not add other succesfull to list when not an address", function() {
+    it("Should not add other successfully to list when not an address", function() {
         var inThen = false;
 
         return Whitelist.deployed().then(function(instance) {
@@ -71,12 +71,12 @@ contract('Whitelist', function(accounts) {
             if(inThen){
                 assert.ok(false, "Should have failed");
             } else {
-                assert.ok(true, "Failed succesfull");
+                assert.ok(true, "Failed successfully");
             }
         });
     });
 
-    it("Should not add other succesfull to list when not an admin", function() {
+    it("Should not add other successfully to list when not an admin", function() {
         var inThen = false;
 
         return Whitelist.deployed().then(function(instance) {
@@ -89,7 +89,7 @@ contract('Whitelist', function(accounts) {
             if(inThen){
                 assert.ok(false, "Should have failed");
             } else {
-                assert.ok(true, "Failed succesfull");
+                assert.ok(true, "Failed successfully");
             }
         });
     });
@@ -135,34 +135,23 @@ contract('Whitelist', function(accounts) {
         }).catch(function(err){
             if (inThen) {
                 assert.ok(false, "should have failed directly");
-                return meta.resumeWhitelist();
             } else {
                 assert.ok(true, "Failed because list is paused");
-                return meta.resumeWhitelist();
             }
         });
     });
 
-    
-
-    // test that owner can stop
-    it("Only owner can call stop method", function() {
-        var inThen;
-
+    it("Should resume Whitelist", function() {
         return Whitelist.deployed().then(function(instance) {
             meta = instance;
-            return meta.stopRegister({from:account_two, gas: 3000000});
+            return meta.resumeWhitelist()
         }).then(function(){
-            inThen = true;
-            assert.ok(false, "Should have failed with testrpc");     
-        }).catch(function(){
-            if (inThen) {
-                assert.ok(false, "should have failed directly");
-            } else {
-                assert.ok(true, "Failed because only owner can call stop method");
-            }
-        })
-        ;
+            return meta.addParticipant(accounts[5]);
+        }).then(function(){
+            return meta.participantAmount.call();
+        }).then(function(count){
+            assert.equal(count.toNumber(), whitelistCount_start +1, "Should have added 1");
+        });
     });
 
     it("Should not be able to add admins", function() {
@@ -294,7 +283,7 @@ contract('Whitelist', function(accounts) {
             if(inThen){
                 assert.ok(false, "Should have failed");
             } else {
-                assert.ok(true, "Failed succesfull");
+                assert.ok(true, "Failed successfully");
             }
         });
     });
@@ -324,32 +313,29 @@ contract('Whitelist', function(accounts) {
         });
     });
 
-    it("Should not register when stopped", function() {
-        var inThen;
+    // test add multipleAddresses
+    it("Should add 3 addresses to the whitelist", function() {
+        var account_eight_balance;
+        const multipleAddresses = [accounts[2],accounts[3],accounts[9]]
 
         return Whitelist.deployed().then(function(instance) {
             meta = instance;
-            return meta.stopRegister();
+            return meta.addMultipleParticipants(multipleAddresses, {from: accounts[0], gas: 3000000})            
         }).then(function(){
-            return meta.getTier(account_empty);
-        }).then(function(tier){
-            if(tier.toNumber() === 0){
-                return meta.addParticipant(account_empty);
-            }
-        }).then(function(){
-            inThen = true;
-            assert.ok(false, "Should have failed with testrpc");    
-        }).catch(function(err){
-            if (inThen) {
-                assert.ok(false, "should have failed directly");
-                return meta.participantAmount.call();                
-            } else {
-                assert.ok(true, "Failed because stop method is invoked");
-                return meta.participantAmount.call();
-            }
-        }).then(function(count){
-            assert.equal(count.toNumber(),whitelistCount_start, "Should be the same");
-        });
+            return meta.participantAmount.call();
+        }).then(function(participantAmount){
+            assert.equal(participantAmount.toNumber(), whitelistCount_start+3, "Should have added 3 addresses")
+        }).then(() => {
+            return meta.isParticipant(accounts[1])
+        }).then((isParticipant) => {
+            assert.equal(isParticipant, true, "Should be true")
+            return meta.isParticipant(accounts[3])
+        }).then((isParticipant) => {
+            assert.equal(isParticipant, true, "Should be true")
+            return meta.isParticipant(accounts[9])
+        }).then((isParticipant) => {
+            assert.equal(isParticipant, true, "Should be true")
+        })
     });
 
 });

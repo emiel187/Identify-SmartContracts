@@ -172,8 +172,6 @@ contract('Presale', function (accounts) {
 
     // test claimTokens
 
-    // test maximum cap of tokens
-
     // test maximum cap op wei
     it('Should buy tokens to setup for further tests', function () {
         return metaWhitelist.addParticipant(accounts[9], { from: account_one, gas: 3000000}).then(() => {
