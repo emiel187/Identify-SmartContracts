@@ -1,4 +1,3 @@
-
 pragma solidity ^0.4.18;
 
 import '../ownership/Ownable.sol';
@@ -20,9 +19,9 @@ import '../crowdsale/Whitelist.sol';
 contract Presale is Ownable {
   using SafeMath for uint256;
 
-  // The token being sold
+  // token being sold
   Identify public token;
-  // The address of the token being sold
+  // address of the token being sold
   address public tokenAddress;
 
   // start and end timestamps where investments are allowed (both inclusive)
@@ -81,22 +80,44 @@ contract Presale is Ownable {
    * @param timestamp when the pause function is invoked
    */
   event Paused(address indexed owner, uint256 timestamp);
+  
+  /**
+   * event for resume logging
+   * @param owner who invoked the resume function
+   * @param timestamp when the resume function is invoked
+   */
   event Resumed(address indexed owner, uint256 timestamp);
 
-
-  modifier isInWhitelist() {
+  /**
+   * modifier to check if a participant is in the whitelist
+   */
+  modifier isInWhitelist(address beneficiary) {
     // first check if sender is in whitelist
-    require(whitelist.isParticipant(msg.sender));
+    require(whitelist.isParticipant(beneficiary));
     _;
   }
 
+  /**
+   * modifier to check if the presale is not paused
+   */
   modifier whenNotPaused() {
     require(!paused);
     _;
   }
 
-  function Presale(uint256 _startTime, address _wallet, address _token, address _whitelist, uint256 _capETH, uint256 _capTokens, uint256 _minimumETH, uint256 _maximumETH) public 
-  {
+
+  /**
+   * constructor for Presale
+   * @param _startTime start timestamps where investments are allowed (inclusive)
+   * @param _wallet address where funds are forwarded
+   * @param _token address of the token being sold
+   * @param _whitelist whitelist contract address
+   * @param _capETH maximum of ETH the presale wants to raise
+   * @param _capTokens maximum amount of tokens the presale wants to raise
+   * @param _minimumETH minimum amount of ETH an investor needs to send in order to get tokens
+   * @param _maximumETH maximum amount of ETH an investor can send in order to get tokens
+   */
+  function Presale(uint256 _startTime, address _wallet, address _token, address _whitelist, uint256 _capETH, uint256 _capTokens, uint256 _minimumETH, uint256 _maximumETH) public {
   
     require(_startTime >= now);
     require(_wallet != address(0));
@@ -119,14 +140,15 @@ contract Presale is Ownable {
     maximumWEI = _maximumETH * (10 ** uint256(18));
   }
 
-  // fallback function can be used to buy tokens
-  function () external payable 
-  {
+  /**
+   * fallback function can be used to buy tokens
+   */
+  function () external payable {
     buyTokens(msg.sender);
   }
 
   // low level token purchase function
-  function buyTokens(address beneficiary) isInWhitelist whenNotPaused public payable returns (bool) {
+  function buyTokens(address beneficiary) isInWhitelist(beneficiary) whenNotPaused public payable returns (bool) {
     require(beneficiary != address(0));
     require(validPurchase());
     require(!hasEnded());
@@ -141,7 +163,6 @@ contract Presale is Ownable {
     weiRaised = weiRaised.add(weiAmount);
     tokenRaised = tokenRaised.add(tokens);
 
-    //this breaks
     require(token.transferFrom(tokenAddress, beneficiary, tokens));
     
     TokenPurchase(msg.sender, beneficiary, weiAmount, tokens);
@@ -150,7 +171,9 @@ contract Presale is Ownable {
     return true;
   }
 
-  // @return true if crowdsale event has ended
+  /**
+   * @return true if crowdsale event has ended
+   */
   function hasEnded() public view returns (bool) {
     bool capReached = weiRaised >= capWEI;
     bool capTokensReached = tokenRaised >= capTokens;
@@ -158,21 +181,31 @@ contract Presale is Ownable {
     return (capReached || capTokensReached) || ended;
   }
 
-  // Override this method to have a way to add business logic to your crowdsale when buying
+
+
+  /**
+   * calculate the amount of tokens a participant gets for a specific weiAmount
+   * @return the token amount
+   */
   function getTokenAmount(uint256 weiAmount) internal view returns(uint256) {
     // wei has 18 decimals, our token has 6 decimals -> so need for convertion
     uint256 bonusIntegrated = weiAmount.div(10000000000000).mul(rate).mul(bonusPercentage).div(100);
     return bonusIntegrated;
   }
 
-  // send ether to the fund collection wallet
-  // override to create custom fund forwarding mechanisms
+  /**
+   * send ether to the fund collection wallet
+   * @return true if successful
+   */
   function forwardFunds() internal returns (bool) {
     wallet.transfer(msg.value);
     return true;
   }
 
-  // @return true if the transaction can buy tokens
+
+  /**
+   * @return true if the transaction can buy tokens
+   */
   function validPurchase() internal view returns (bool) {
     bool withinPeriod = now >= startTime && now <= endTime;
     bool nonZeroPurchase = msg.value != 0;
@@ -183,7 +216,9 @@ contract Presale is Ownable {
 
   }
 
-
+  /**
+   * @return true if the owner transfered successful
+   */
   function transferOwnershipToken(address _newOwner) onlyOwner public returns (bool) {
     require(token.transferOwnership(_newOwner));
     return true;
@@ -193,11 +228,15 @@ contract Presale is Ownable {
   /// SAFETY FUNCTIONS ///
   ////////////////////////
 
-  /// @dev Internal function to determine if an address is a contract
-  /// @param _addr The address being queried
-  /// @return True if `_addr` is a contract
+  /**
+   * @dev Internal function to determine if an address is a contract
+   * @param _addr The address being queried
+   * @return True if `_addr` is a contract
+   */
   function isContract(address _addr) constant internal returns (bool) {
-    if (_addr == 0) { return false; }
+    if (_addr == 0) { 
+      return false; 
+    }
     uint256 size;
     assembly {
         size := extcodesize(_addr)
@@ -205,9 +244,12 @@ contract Presale is Ownable {
     return (size > 0);
   }
 
-    /// @notice This method can be used by the controller (owner) to extract mistakenly sent tokens to this contract.
-    /// @param _claimtoken The address of the token contract that you want to recover
-    ///  set to 0 in case you want to extract ether.
+
+  /**
+   * @notice This method can be used by the owner to extract mistakenly sent tokens to this contract.
+   * @param _claimtoken The address of the token contract that you want to recover
+   * set to 0 in case you want to extract ether.
+   */
   function claimTokens(address _claimtoken) onlyOwner public returns (bool) {
     if (_claimtoken == 0x0) {
       owner.transfer(this.balance);
@@ -221,14 +263,18 @@ contract Presale is Ownable {
     return true;
   }
 
-  // @notice Pauses the presale if there is any issue
+  /**
+   * @notice Pauses the presale if there is an issue
+   */
   function pausePresale() onlyOwner public returns (bool) {
     paused = true;
     Paused(owner, now);
     return true;
   }
 
-  // @notice Resumes the Presale
+  /**
+   * @notice Resumes the presale
+   */  
   function resumePresale() onlyOwner public returns (bool) {
     paused = false;
     Resumed(owner, now);
