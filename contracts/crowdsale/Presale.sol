@@ -23,7 +23,7 @@ contract Presale is Ownable {
 
   // The token being sold
   Identify public token;
-  address public tokenAdress;
+  address public tokenAddress;
 
   // start and end timestamps where investments are allowed (both inclusive)
   uint256 public startTime;
@@ -91,7 +91,7 @@ contract Presale is Ownable {
     startTime = _startTime;
     endTime = _startTime.add(10 weeks);
     wallet = _wallet;
-    tokenAdress = _token;
+    tokenAddress = _token;
     token = Identify(_token);
     whitelistAddress = _whitelist;
     whitelist = Whitelist(_whitelist);
@@ -123,7 +123,9 @@ contract Presale is Ownable {
     weiRaised = weiRaised.add(weiAmount);
     tokenRaised = tokenRaised.add(tokens);
 
-    require(token.transferFrom(tokenAdress, beneficiary, tokens));
+    //this breaks
+    require(token.transferFrom(tokenAddress, beneficiary, tokens));
+    
     TokenPurchase(msg.sender, beneficiary, weiAmount, tokens);
 
     forwardFunds();
