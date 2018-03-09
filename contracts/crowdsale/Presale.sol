@@ -9,13 +9,12 @@ import '../crowdsale/Whitelist.sol';
 
 
 /**
- * @title Crowdsale
- * @dev Crowdsale is a base contract for managing a token crowdsale.
- * Crowdsales have a start and end timestamps, where investors can make
- * token purchases and the crowdsale will assign them tokens based
+ * @title Presale
+ * @dev Presale is a base contract for managing a token presale.
+ * Presales have a start and end timestamps, where investors can make
+ * token purchases and the presale will assign them tokens based
  * on a token per ETH rate. Funds collected are forwarded to a wallet
- * as they arrive. The contract requires a MintableToken that will be
- * minted as contributions arrive, note that the crowdsale contract
+ * as they arrive. Note that the presale contract
  * must be owner of the token in order to be able to mint it.
  */
 contract Presale is Ownable {
@@ -23,18 +22,18 @@ contract Presale is Ownable {
 
   // The token being sold
   Identify public token;
+  // The address of the token being sold
   address public tokenAddress;
 
   // start and end timestamps where investments are allowed (both inclusive)
   uint256 public startTime;
   uint256 public endTime;
 
-  // address where funds are collected
+  // address where funds are forwarded
   address public wallet;
 
-  // address from the Whitelist
+  // whitelist contract
   Whitelist public whitelist;
-  address public whitelistAddress;
 
   // how many token units a buyer gets per ETH
   uint256 public rate = 4200000;
@@ -42,26 +41,45 @@ contract Presale is Ownable {
   // amount of raised money in wei
   uint256 public weiRaised;  
   
-  // amount of tokens 
+  // amount of tokens raised
   uint256 public tokenRaised;
 
-  // All parameters
+  // parameters for the presale:
+  // maximum of wei the presale wants to raise
   uint256 public capWEI;
+  // maximum of tokens the presale wants to raise
   uint256 public capTokens;
-  uint256 public bonusPercentage = 125; // 25% bonus
+  // bonus investors get in the presale - 25%
+  uint256 public bonusPercentage = 125;
+  // minimum amount of wei an investor needs to send in order to get tokens
   uint256 public minimumWEI;
+  // maximum amount of wei an investor can send in order to get tokens
   uint256 public maximumWEI;
+  // a boolean to check if the presale is paused
   bool public paused = false;
 
   /**
    * event for token purchase logging
    * @param purchaser who paid for the tokens
    * @param beneficiary who got the tokens
-   * @param value weis paid for purchase
+   * @param value WEIs paid for purchase
    * @param amount amount of tokens purchased
    */
   event TokenPurchase(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
-  event ClaimedTokens(address indexed _claimtoken, address indexed _owner, uint _amount);
+  
+  /**
+   * event for claimed tokens logging
+   * @param owner where tokens are sent to
+   * @param claimtoken is the address of the ERC20 compliant token
+   * @param amount amount of tokens sent back
+   */
+  event ClaimedTokens(address indexed owner, address claimtoken, uint amount);
+  
+  /**
+   * event for pause logging
+   * @param owner who invoked the pause function
+   * @param timestamp when the pause function is invoked
+   */
   event Paused(address indexed owner, uint256 timestamp);
   event Resumed(address indexed owner, uint256 timestamp);
 
@@ -94,7 +112,6 @@ contract Presale is Ownable {
     wallet = _wallet;
     tokenAddress = _token;
     token = Identify(_token);
-    whitelistAddress = _whitelist;
     whitelist = Whitelist(_whitelist);
     capWEI = _capETH * (10 ** uint256(18));
     capTokens = _capTokens * (10 ** uint256(6));
