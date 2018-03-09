@@ -14,7 +14,10 @@ contract Whitelist is Ownable {
     // the amount of participants in the whitelist
     uint256 public participantAmount;
 
+    // mapping of participants
     mapping (address => bool) public isParticipant;
+    
+    // mapping of admins
     mapping (address => bool) public isAdmin;
 
     event AddParticipant(address _participant);
@@ -156,7 +159,7 @@ contract Whitelist is Ownable {
 
         return true;
     }
-    
+
     /**
     * @notice This method can be used by the owner to extract mistakenly sent tokens to this contract.
     * @param _claimtoken The address of the token contract that you want to recover
