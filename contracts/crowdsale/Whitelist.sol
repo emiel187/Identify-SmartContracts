@@ -20,12 +20,6 @@ contract Whitelist is Ownable {
     event RemoveParticipant(address _participant);
     event Paused(address _owner, uint256 _time);
     event Resumed(address _owner, uint256 _time);
-    event Finalized(address _owner, uint256 _time);
-
-    // modifier notFinalized() {
-    //     require(!finalized);
-    //     _;
-    // }
 
     modifier notPaused() {
         require(!paused);
@@ -46,7 +40,7 @@ contract Whitelist is Ownable {
         addAdmin(msg.sender);
     }
 
-    function addSelfAsParticipant() onlyAdmin public returns (bool) {
+    function addSelfAsParticipant() notPaused onlyAdmin public returns (bool) {
         require(addParticipant(msg.sender));
         return true;
     }
@@ -67,7 +61,7 @@ contract Whitelist is Ownable {
         return true;
     }
 
-    function removeParticipant(address _participant) public onlyAdmin  returns (bool) {
+    function removeParticipant(address _participant) public  onlyAdmin  returns (bool) {
         require(address(_participant) != 0);
         require(isParticipant[_participant] == true);
         require(msg.sender != _participant);
@@ -99,26 +93,6 @@ contract Whitelist is Ownable {
         return true;
     }
 
-    // // Needs to be reworked
-    // // Function used to save gas.
-    // function addFiveParticipants(address _participantOne, address _participantTwo, address _participantThree, address _participantFour, address _participantFive) public onlyOwner notFinalized returns (bool) {
-        
-    //     require(addParticipant(_participantOne));
-    //     require(addParticipant(_participantTwo));
-    //     require(addParticipant(_participantThree));
-    //     require(addParticipant(_participantFour));
-    //     require(addParticipant(_participantFive));
-    //     return true;
-    // }
-
-    function getTotalParticipants() public view returns (uint256) {
-        return participantAmount;
-    }
-
-    function getTotalAdmins() public view onlyAdmin returns (uint256) {
-        return adminAmount;
-    }
-
     // @notice Pauses the whitelist if there is any issue
     function pauseWhitelist() public onlyOwner returns (bool) {
         paused = true;
@@ -133,9 +107,13 @@ contract Whitelist is Ownable {
         return true;
     }
 
-    function finzalize() public onlyOwner returns (bool) {
-        finalized = true;
-        Finalized(owner,now);
+    // Function used to save gas.
+    function addMultipleParticipants(address[] _participants ) public onlyOwner returns (bool) {
+        
+        for ( uint i = 0; i < _participants.length; i++ ) {
+            require(addParticipant(_participants[i]));
+        }
+
         return true;
     }
 

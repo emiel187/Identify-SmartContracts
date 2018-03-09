@@ -9,7 +9,7 @@ module.exports = function(deployer, network) {
     if(network == 'local'){
         // network local
         deployer.deploy(Presale, 
-            Math.round((Date.now()/1000)+ 100), // start
+            Math.round((Date.now()/1000)+ 300), // start
             Multisig.address, // wallet
             Identify.address,
             Whitelist.address,

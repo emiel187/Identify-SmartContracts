@@ -79,6 +79,7 @@ contract Presale is Ownable {
 
   function Presale(uint256 _startTime, address _wallet, address _token, address _whitelist, uint256 _capETH, uint256 _capTokens, uint256 _minimumETH, uint256 _maximumETH) public 
   {
+  
     require(_startTime >= now);
     require(_wallet != address(0));
     require(_token != address(0));
