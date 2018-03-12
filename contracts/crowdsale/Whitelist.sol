@@ -94,7 +94,7 @@ contract Whitelist is Ownable {
      */
     function removeParticipant(address _participant) public onlyAdmin returns (bool) {
         require(address(_participant) != 0);
-        require(!isParticipant[_participant]);
+        require(isParticipant[_participant]);
         require(msg.sender != _participant);
 
         delete isParticipant[_participant];

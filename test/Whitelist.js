@@ -99,23 +99,22 @@ contract('Whitelist', function(accounts) {
         var inThen;
         return Whitelist.deployed().then(function(instance) {
             meta = instance;
+            return meta.addParticipant(account_one);                
         }).then(function(){
-            return meta.addParticipant(account_one).then(function(){
-                return meta.addParticipant(account_one)
-            });
+            return meta.addParticipant(account_one);
         }).then(function(){
             inThen = true;
             assert.ok(false, "Should have failed with testrpc");
         }).catch(function(){
             if (inThen) {
-                assert.ok(false, "should have failed directly");
+                assert.ok(false, "Should have failed directly");
                 return meta.participantAmount.call();
             } else {
                 assert.ok(true, "Failed because already in list");
                 return meta.participantAmount.call();
             }
         }).then(function(count){
-            assert.equal(count.toNumber(), whitelistCount_start, "Should not have added 1");            
+            assert.equal(count.toNumber(), whitelistCount_start + 1, "Should only have added 1");            
         });
     }); 
 
@@ -134,7 +133,7 @@ contract('Whitelist', function(accounts) {
             assert.ok(false, "Should have failed with testrpc");            
         }).catch(function(err){
             if (inThen) {
-                assert.ok(false, "should have failed directly");
+                assert.ok(false, "Should have failed directly");
             } else {
                 assert.ok(true, "Failed because list is paused");
             }
@@ -217,7 +216,7 @@ contract('Whitelist', function(accounts) {
             assert.ok(false, "Should have failed with testrpc");     
         }).catch(function(){
             if (inThen) {
-                assert.ok(false, "should have failed directly");
+                assert.ok(false, "Should have failed directly");
             } else {
                 assert.ok(true, "Failed because only owner can call stop method");
             }
@@ -226,28 +225,26 @@ contract('Whitelist', function(accounts) {
     });
 
     it("Should remove an existing account and update the count. After add this one again", function() {
-        var whitelistCount_inter;
 
         return Whitelist.deployed().then(function(instance) {
             meta = instance;
-        }).then(function(){
             return meta.addParticipant(accounts[7])
         }).then(function(){
             return meta.participantAmount.call();
         }).then(function(count){
-            whitelistCount_inter = count.toNumber();
             return meta.removeParticipant(accounts[7]);
         }).then(function(){
             return meta.participantAmount.call();
         }).then(function(count){
-            assert.equal(count.toNumber(),whitelistCount_inter - 1, "Should be one less");
+            assert.equal(count.toNumber(),whitelistCount_start, "Should be one less");
             return true;
         }).then(function(){
             return meta.addParticipant(accounts[7])
         }).then(function(){
             return meta.participantAmount.call();   
         }).then(function(count){
-            assert.equal(count.toNumber(),whitelistCount_inter, "Should be the same as in the beginning");
+            assert.equal(count.toNumber(),whitelistCount_start + 1, "Should be the same as in the beginning");
+            return true;
         })
         ;
     });
@@ -320,21 +317,22 @@ contract('Whitelist', function(accounts) {
 
         return Whitelist.deployed().then(function(instance) {
             meta = instance;
-            return meta.addMultipleParticipants(multipleAddresses, {from: accounts[0], gas: 3000000})            
+            return meta.addMultipleParticipants(multipleAddresses, {from: accounts[0], gas: 3000000});            
         }).then(function(){
             return meta.participantAmount.call();
         }).then(function(participantAmount){
-            assert.equal(participantAmount.toNumber(), whitelistCount_start+3, "Should have added 3 addresses")
+            assert.equal(participantAmount.toNumber(), whitelistCount_start+3, "Should have added 3 addresses");
+            return true;
         }).then(() => {
-            return meta.isParticipant(accounts[1])
-        }).then((isParticipant) => {
+            return meta.isParticipant(accounts[1]);
+        }).then((isParticipant) => {;
             assert.equal(isParticipant, true, "Should be true")
             return meta.isParticipant(accounts[3])
         }).then((isParticipant) => {
-            assert.equal(isParticipant, true, "Should be true")
+            assert.equal(isParticipant, true, "Should be true");
             return meta.isParticipant(accounts[9])
         }).then((isParticipant) => {
-            assert.equal(isParticipant, true, "Should be true")
+            assert.equal(isParticipant, true, "Should be true");
         })
     });
 
