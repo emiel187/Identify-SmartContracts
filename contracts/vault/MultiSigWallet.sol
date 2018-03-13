@@ -97,8 +97,9 @@ contract MultiSigWallet {
         }
         _;
     }
-
-    /// @dev Fallback function allows to deposit ether.
+    /**
+     * @dev Fallback function allows to deposit ether.
+     */
     function() public
         payable
     {
@@ -110,9 +111,12 @@ contract MultiSigWallet {
     /*
      * Public functions
      */
-    /// @dev Contract constructor sets initial owners and required number of confirmations.
-    /// @param _owners List of initial owners.
-    /// @param _required Number of required confirmations.
+
+    /**
+     * @dev Contract constructor sets initial owners and required number of confirmations.
+     * @param _owners List of initial owners.
+     * @param _required Number of required confirmations.
+     */
     function MultiSigWallet(address[] _owners, uint _required, address _token)
         public
         validRequirement(_owners.length, _required)
@@ -130,8 +134,10 @@ contract MultiSigWallet {
         token = Identify(_token);
     }
 
-    /// @dev Allows to add a new owner. Transaction has to be sent by wallet.
-    /// @param owner Address of new owner.
+    /**
+     * @dev Allows to add a new owner. Transaction has to be sent by wallet.
+     * @param owner Address of new owner.
+     */
     function addOwner(address owner)
         public
         onlyWallet
@@ -146,8 +152,10 @@ contract MultiSigWallet {
         return true;
     }
 
-    /// @dev Allows to remove an owner. Transaction has to be sent by wallet.
-    /// @param owner Address of owner.
+    /**
+     * @dev Allows to remove an owner. Transaction has to be sent by wallet.
+     * @param owner Address of owner.
+     */
     function removeOwner(address owner)
         public
         onlyWallet
@@ -169,9 +177,11 @@ contract MultiSigWallet {
         return true;
     }
 
-    /// @dev Allows to replace an owner with a new owner. Transaction has to be sent by wallet.
-    /// @param owner Address of owner to be replaced.
-    /// @param owner Address of new owner.
+    /**
+     * @dev Allows to replace an owner with a new owner. Transaction has to be sent by wallet.
+     * @param owner Address of owner to be replaced.
+     * @param owner Address of new owner.
+     */
     function replaceOwner(address owner, address newOwner)
         public
         onlyWallet
@@ -192,8 +202,10 @@ contract MultiSigWallet {
         return true;
     }
 
-    /// @dev Allows to change the number of required confirmations. Transaction has to be sent by wallet.
-    /// @param _required Number of required confirmations.
+    /**
+     * @dev Allows to change the number of required confirmations. Transaction has to be sent by wallet.
+     * @param _required Number of required confirmations.
+     */
     function changeRequirement(uint _required)
         public
         onlyWallet
@@ -205,11 +217,13 @@ contract MultiSigWallet {
         return true;
     }
 
-    /// @dev Allows an owner to submit and confirm a transaction.
-    /// @param destination Transaction target address.
-    /// @param value Transaction ether value.
-    /// @param data Transaction data payload.
-    /// @return Returns transaction ID.
+    /**
+     * @dev Allows an owner to submit and confirm a transaction.
+     * @param destination Transaction target address.
+     * @param value Transaction ether value.
+     * @param data Transaction data payload.
+     * @return Returns transaction ID.
+     */
     function submitTransaction(address destination, uint value, bytes data)
         public
         returns (uint transactionId)
@@ -218,8 +232,10 @@ contract MultiSigWallet {
         confirmTransaction(transactionId);
     }
 
-    /// @dev Allows an owner to confirm a transaction.
-    /// @param transactionId Transaction ID.
+    /**
+     * @dev Allows an owner to confirm a transaction.
+     * @param transactionId Transaction ID.
+     */
     function confirmTransaction(uint transactionId)
         public
         ownerExists(msg.sender)
@@ -233,8 +249,10 @@ contract MultiSigWallet {
         return true;
     }
 
-    /// @dev Allows an owner to revoke a confirmation for a transaction.
-    /// @param transactionId Transaction ID.
+    /**
+     * @dev Allows an owner to revoke a confirmation for a transaction.
+     * @param transactionId Transaction ID.
+     */
     function revokeConfirmation(uint transactionId)
         public
         ownerExists(msg.sender)
@@ -247,8 +265,10 @@ contract MultiSigWallet {
         return true;
     }
 
-    /// @dev Allows anyone to execute a confirmed transaction.
-    /// @param transactionId Transaction ID.
+    /**
+     * @dev Allows anyone to execute a confirmed transaction.
+     * @param transactionId Transaction ID.
+     */
     function executeTransaction(uint transactionId)
         public
         notExecuted(transactionId)
@@ -267,9 +287,12 @@ contract MultiSigWallet {
         return true;
     }
 
-    /// @dev Returns the confirmation status of a transaction.
-    /// @param transactionId Transaction ID.
-    /// @return Confirmation status.
+
+    /**
+     * @dev Returns the confirmation status of a transaction.
+     * @param transactionId Transaction ID.
+     * @return Confirmation status.
+     */
     function isConfirmed(uint transactionId)
         public
         view
@@ -289,11 +312,14 @@ contract MultiSigWallet {
     /*
      * Internal functions
      */
-    /// @dev Adds a new transaction to the transaction mapping, if transaction does not exist yet.
-    /// @param destination Transaction target address.
-    /// @param value Transaction ether value.
-    /// @param data Transaction data payload.
-    /// @return Returns transaction ID.
+
+    /**
+     * @dev Adds a new transaction to the transaction mapping, if transaction does not exist yet.
+     * @param destination Transaction target address.
+     * @param value Transaction ether value.
+     * @param data Transaction data payload.
+     * @return Returns transaction ID.
+     */ 
     function addTransaction(address destination, uint value, bytes data)
         internal
         notNull(destination)
@@ -313,9 +339,13 @@ contract MultiSigWallet {
     /*
      * Web3 call functions
      */
-    /// @dev Returns number of confirmations of a transaction.
-    /// @param transactionId Transaction ID.
-    /// @return Number of confirmations.
+
+
+    /**
+     * @dev Returns number of confirmations of a transaction.
+     * @param transactionId Transaction ID.
+     * @return Number of confirmations.
+     */ 
     function getConfirmationCount(uint transactionId)
         public
         view
@@ -328,10 +358,12 @@ contract MultiSigWallet {
         }
     }
 
-    /// @dev Returns total number of transactions after filers are applied.
-    /// @param pending Include pending transactions.
-    /// @param executed Include executed transactions.
-    /// @return Total number of transactions after filters are applied.
+    /**
+     * @dev Returns total number of transactions after filers are applied.
+     * @param pending Include pending transactions.
+     * @param executed Include executed transactions.
+     * @return Total number of transactions after filters are applied.
+     */ 
     function getTransactionCount(bool pending, bool executed)
         public
         view
@@ -344,8 +376,10 @@ contract MultiSigWallet {
         }
     }
 
-    /// @dev Returns list of owners.
-    /// @return List of owner addresses.
+    /**
+     * @dev Returns list of owners.
+     * @return List of owner addresses.
+     */
     function getOwners()
         public
         view
@@ -354,9 +388,11 @@ contract MultiSigWallet {
         return owners;
     }
 
-    /// @dev Returns array with owner addresses, which confirmed transaction.
-    /// @param transactionId Transaction ID.
-    /// @return Returns array of owner addresses.
+    /**
+     * @dev Returns array with owner addresses, which confirmed transaction.
+     * @param transactionId Transaction ID.
+     * @return Returns array of owner addresses.
+     */
     function getConfirmations(uint transactionId)
         public
         view
@@ -377,12 +413,14 @@ contract MultiSigWallet {
         }
     }
 
-    /// @dev Returns list of transaction IDs in defined range.
-    /// @param from Index start position of transaction array.
-    /// @param to Index end position of transaction array.
-    /// @param pending Include pending transactions.
-    /// @param executed Include executed transactions.
-    /// @return Returns array of transaction IDs.
+    /**
+     * @dev Returns list of transaction IDs in defined range.
+     * @param from Index start position of transaction array.
+     * @param to Index end position of transaction array.
+     * @param pending Include pending transactions.
+     * @param executed Include executed transactions.
+     * @return Returns array of transaction IDs.
+     */
     function getTransactionIds(uint from, uint to, bool pending, bool executed)
         public
         view
@@ -403,11 +441,19 @@ contract MultiSigWallet {
         }
     }
 
-
-     function getIdentifyAmount() public view returns (uint) {
+    /**
+     * @return Returns the amount of Identify tokens for this wallet.
+     */
+     function getIdentifyAmount() public view returns (uint256 balance) {
         return token.balanceOf(this);
     }
 
+    /**
+     * @dev transfers Identify tokens.
+     * @param _to receiver for the tokens.
+     * @param _value number of tokens to be send.
+     * @return Returns true if successful.
+     */
     function transferIdentify(address _to, uint256 _value) onlyWallet public returns (bool) {
         require(_to != address(0));
         require(_value > 0);

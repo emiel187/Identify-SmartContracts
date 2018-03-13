@@ -9,12 +9,12 @@ import "../ownership/Ownable.sol";
  *
  * @dev Implementation of the basic standard token.
  * @dev https://github.com/ethereum/EIPs/issues/20
- * @dev Based on code by FirstBlood: https://github.com/Firstbloodio/token/blob/master/smart_contract/FirstBloodToken.sol
  */
 contract CustomToken is ERC20, BasicToken, Ownable {
 
   mapping (address => mapping (address => uint256)) internal allowed;
 
+  // boolean if transfers can be done
   bool public enableTransfer = true;
 
   /**
@@ -51,6 +51,8 @@ contract CustomToken is ERC20, BasicToken, Ownable {
    * @param _from address The address which you want to send tokens from
    * @param _to address The address which you want to transfer to
    * @param _value uint256 the amount of tokens to be transferred
+   * The owner can transfer tokens at will. This to implement a reward pool contract in a later phase 
+   * that will transfer tokens for rewarding.
    */
   function transferFrom(address _from, address _to, uint256 _value) whenTransferEnabled public returns (bool) {
     require(_to != address(0));
@@ -74,10 +76,6 @@ contract CustomToken is ERC20, BasicToken, Ownable {
   /**
    * @dev Approve the passed address to spend the specified amount of tokens on behalf of msg.sender.
    *
-   * Beware that changing an allowance with this method brings the risk that someone may use both the old
-   * and the new allowance by unfortunate transaction ordering. One possible solution to mitigate this
-   * race condition is to first reduce the spender's allowance to 0 and set the desired value afterwards:
-   * https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729
    * @param _spender The address which will spend the funds.
    * @param _value The amount of tokens to be spent.
    */
@@ -109,7 +107,9 @@ contract CustomToken is ERC20, BasicToken, Ownable {
     return true;
   }
 
-  /* Approves and then calls the receiving contract */
+  /* 
+   * Approves and then calls the receiving contract 
+   */
   function approveAndCall(address _spender, uint256 _value, bytes _extraData) whenTransferEnabled public returns (bool success) {
     // check if the _spender already has some amount approved else use increase approval.
     // maybe not for exchanges
@@ -122,6 +122,20 @@ contract CustomToken is ERC20, BasicToken, Ownable {
     //receiveApproval(address _from, uint256 _value, address _tokenContract, bytes _extraData)
     //it is assumed when one does this that the call *should* succeed, otherwise one would use vanilla approve instead.
     require(_spender.call(bytes4(bytes32(keccak256("receiveApproval(address,uint256,address,bytes)"))), msg.sender, _value, this, _extraData));
+    return true;
+  }
+
+  /* 
+   * Approves and then calls the receiving contract 
+   */
+  function approveAndCallByContract(address _spender, uint256 _value, bytes _extraData) public onlyOwner returns (bool success) {
+    allowed[this][_spender] = _value;
+    Approval(this, _spender, _value);
+
+    //call the receiveApproval function on the contract you want to be notified. This crafts the function signature manually so one doesn't have to include a contract in here just for this.
+    //receiveApproval(address _from, uint256 _value, address _tokenContract, bytes _extraData)
+    //it is assumed when one does this that the call *should* succeed, otherwise one would use vanilla approve instead.
+    require(_spender.call(bytes4(bytes32(keccak256("receiveApproval(address,uint256,address,bytes)"))), this, _value, this, _extraData));
     return true;
   }
 
@@ -141,7 +155,6 @@ contract CustomToken is ERC20, BasicToken, Ownable {
    * approve should be called when allowed[_spender] == 0. To increment
    * allowed value is better to use this function to avoid 2 calls (and wait until
    * the first transaction is mined)
-   * From MonolithDAO Token.sol
    * @param _spender The address which will spend the funds.
    * @param _addedValue The amount of tokens to increase the allowance by.
    */
@@ -157,7 +170,6 @@ contract CustomToken is ERC20, BasicToken, Ownable {
    * approve should be called when allowed[_spender] == 0. To decrement
    * allowed value is better to use this function to avoid 2 calls (and wait until
    * the first transaction is mined)
-   * From MonolithDAO Token.sol
    * @param _spender The address which will spend the funds.
    * @param _subtractedValue The amount of tokens to decrease the allowance by.
    */
