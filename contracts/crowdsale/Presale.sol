@@ -105,6 +105,14 @@ contract Presale is Ownable {
     _;
   }
 
+  /**
+   * modifier to check only multisigwallet can do this operation
+   */
+  modifier onlyMultisigWallet() {
+    require(msg.sender == wallet);
+    _;
+  }
+
 
   /**
    * constructor for Presale
@@ -219,7 +227,7 @@ contract Presale is Ownable {
   /**
    * @return true if the owner transfered successful
    */
-  function transferOwnershipToken(address _newOwner) onlyOwner public returns (bool) {
+  function transferOwnershipToken(address _newOwner) onlyMultisigWallet public returns (bool) {
     require(token.transferOwnership(_newOwner));
     return true;
   }

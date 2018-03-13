@@ -20,9 +20,9 @@ contract('MultiSigWallet', function (accounts) {
         metaPresale = await Presale.deployed();
         metaIdentify = await Identify.deployed();
         // make accounts[0] owner of presale
-        return Presale.deployed().then(function (instance) {
+        /*return Presale.deployed().then(function (instance) {
             return instance.transferOwnershipToken(account_one);
-        });
+        });*/
     });
 
     beforeEach(function () {
@@ -293,7 +293,7 @@ contract('MultiSigWallet', function (accounts) {
             ;
     });
 
-
+/*
     // get Identify token amount
     it("Should display Identify tokens properly", function () {
 
@@ -310,10 +310,9 @@ contract('MultiSigWallet', function (accounts) {
             return metaMultisig.getIdentifyAmount();
         }).then(function (tokens) {
             return assert.equal(tokens.toNumber(), Identify_start + 10000000000);
-        })
-            ;
+        });
     });
-
+*/
 
     it("Should add owner after confirmations+ required stays at 2", function () {
         var owners_start;
@@ -513,7 +512,7 @@ contract('MultiSigWallet', function (accounts) {
     });
 
     // transfer Identify token amount -> 0x7926902e
-
+/*
     it("Should transfer Identify tokens to an account after confirmation", function () {
         var transaction_id;
         var multisig_Identify_start;
@@ -553,8 +552,7 @@ contract('MultiSigWallet', function (accounts) {
             return metaIdentify.balanceOf(account_two);
         }).then(function (balance) {
             assert.equal(balance.toNumber(), (account_two_Identify_start + 10000000000));
-        })
-            ;
+        });
     });
 
 
@@ -567,7 +565,7 @@ contract('MultiSigWallet', function (accounts) {
         }).then(function (transactionids) {
             return assert.equal(transactionids.length, 13, "Should have 13 transactions as return value");
         });
-    });
+    });*/
 
     // test getTransactionIds
     it("Should fail when more than 13 transactions at getTransactionIds", function () {
@@ -585,7 +583,7 @@ contract('MultiSigWallet', function (accounts) {
         });
     });
 
-
+/*
     // test getTransactionCount
     it("Should return 13 at getTransactionCount", function () {
         return MultiSigWallet.deployed().then(function (instance) {
@@ -603,7 +601,7 @@ contract('MultiSigWallet', function (accounts) {
         }).then(function (transactioncount) {
             return assert.equal(transactioncount, 8, "Should have 8 executed transactions as return value");
         });
-    });
+    });*/
 
     // test notNull modifier
     it("Should fail when owners address is invalid", function () {
@@ -619,6 +617,29 @@ contract('MultiSigWallet', function (accounts) {
                 assert.ok(true, "Failed because not a valid address");
             }
         });
+    });
+
+
+    // transfer ownership of token
+    it("Should transfer ownership of presale to multisigwallet", function () {
+
+        var new_owner = account_one.substring(2, (account_one.length));
+        // transferownership token
+        var function_data = "0x9ae6892b";
+        var data = function_data + "000000000000000000000000" + new_owner;
+
+        return MultiSigWallet.deployed().then(function (instance) {
+            metaMultisig = instance;
+            console.log(metaPresale.address);
+            return metaMultisig.submitTransaction(metaPresale.address, 0, data, { from: account_one, gas: 3000000 });
+        })/*.then(function () {
+            return metaMultisig.transactionCount.call();
+        }).then(function (transactioncount) {
+            var transaction_id = (transactioncount.toNumber() - 1);
+            return metaMultisig.confirmTransaction(transaction_id, { from: account_two, gas: 3000000 });
+        }).then(function(){
+            // check owner of presale
+        })*/
     });
 
 
