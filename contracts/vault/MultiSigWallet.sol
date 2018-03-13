@@ -170,8 +170,9 @@ contract MultiSigWallet {
             }
         }
         owners.length -= 1;
-        if (required > owners.length)
+        if (required > owners.length) {
             changeRequirement(owners.length);
+        }
         OwnerRemoval(owner);
         return true;
     }
@@ -294,15 +295,17 @@ contract MultiSigWallet {
      */
     function isConfirmed(uint transactionId)
         public
-        constant
+        view
         returns (bool)
     {
         uint count = 0;
         for (uint i = 0; i < owners.length; i++) {
-            if (confirmations[transactionId][owners[i]])
+            if (confirmations[transactionId][owners[i]]) {
                 count += 1;
-            if (count == required)
+            }
+            if (count == required) {
                 return true;
+            }
         }
     }
 
@@ -345,7 +348,7 @@ contract MultiSigWallet {
      */ 
     function getConfirmationCount(uint transactionId)
         public
-        constant
+        view
         returns (uint count)
     {
         for (uint i = 0; i < owners.length; i++) {
@@ -363,7 +366,7 @@ contract MultiSigWallet {
      */ 
     function getTransactionCount(bool pending, bool executed)
         public
-        constant
+        view
         returns (uint count)
     {
         for (uint i = 0; i < transactionCount; i++) {
@@ -379,7 +382,7 @@ contract MultiSigWallet {
      */
     function getOwners()
         public
-        constant
+        view
         returns (address[])
     {
         return owners;
@@ -392,7 +395,7 @@ contract MultiSigWallet {
      */
     function getConfirmations(uint transactionId)
         public
-        constant
+        view
         returns (address[] _confirmations)
     {
         address[] memory confirmationsTemp = new address[](owners.length);
@@ -420,7 +423,7 @@ contract MultiSigWallet {
      */
     function getTransactionIds(uint from, uint to, bool pending, bool executed)
         public
-        constant
+        view
         returns (uint[] _transactionIds)
     {
         uint[] memory transactionIdsTemp = new uint[](transactionCount);
