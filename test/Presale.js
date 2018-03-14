@@ -168,12 +168,50 @@ contract('Presale', function (accounts) {
         });
     });
 
+    // test transferownershiptoken as owner and not as multisig
+    it('Should not transferownershiptoken when invoking as owner', function () {
+        var inThen;
+
+        return metaWhitelist.addParticipant(accounts[9], { from: account_one, gas: 3000000 }).then(() => {
+            return metaPresale.transferOwnershipToken(metaPresaleV2.address);
+        }).then(function () {
+            inThen = true;
+            assert.ok(false, "Should have failed");
+        }).catch(function (err) {
+            if (inThen) {
+                assert.ok(false, "Should have failed");
+            } else {
+                assert.ok(true, "Failed succesfull");
+            }
+        });
+    });
+
+    // test transferownershiptoken as multisig
+    it('Should transferownershiptoken when invoking as multisigwallet', function () {
+        
+        var new_owner = metaPresaleV2.address.substring(2, (metaPresaleV2.address.length));
+        // transferownership token
+        var function_data = "0x9ae6892b";
+        var data = function_data + "000000000000000000000000" + new_owner;
+
+        return MultiSigWallet.deployed().then(function (instance) {
+            metaMultisig = instance;
+            return metaMultisig.submitTransaction(Presale.address, 0, data, { from: account_one, gas: 3000000 });
+        }).then(function () {
+            return metaMultisig.transactionCount.call();
+        }).then(function (transactioncount) {
+            var transaction_id = (transactioncount.toNumber() - 1);
+            return metaMultisig.confirmTransaction(transaction_id, { from: account_two, gas: 3000000 });
+        }).then(function () {
+            return metaIdentify.owner.call();
+        }).then(function (owner) {
+            assert.equal(owner, metaPresaleV2.address, "Should transfered successful");
+        });
+    });
 
     // test maximum cap op wei
     it('Should buy tokens to setup for further tests', function () {
-        return metaWhitelist.addParticipant(accounts[9], { from: account_one, gas: 3000000 }).then(() => {
-            return metaPresale.transferOwnershipToken(metaPresaleV2.address)
-        }).then(function () {
+        return metaWhitelist.addParticipant(accounts[9]).then(function () {
             return metaIdentify.owner.call();
         }).then(function (owner) {
             return assert.equal(owner, metaPresaleV2.address, "Should be presale");
@@ -289,9 +327,11 @@ contract('Presale', function (accounts) {
         });
     });
 
-    // test transferownershiptoken as owner and not as multisig
+    
 
+    // test transferownership as owner and not as multisig
 
+    // test transferownership as multisig
 
 
 

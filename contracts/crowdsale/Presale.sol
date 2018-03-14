@@ -225,12 +225,28 @@ contract Presale is Ownable {
   }
 
   /**
-   * @return true if the owner transfered successful
+   * @dev Allows the multisigwallet to transfer control of the Identify Token to a newOwner.
+   * @param newOwner The address to transfer ownership to.
    */
-  function transferOwnershipToken(address _newOwner) onlyMultisigWallet public returns (bool) {
-    require(token.transferOwnership(_newOwner));
+  function transferOwnershipToken(address newOwner) onlyMultisigWallet public returns (bool) {
+    require(token.transferOwnership(newOwner));
     return true;
   }
+
+   /**
+   * Overwrite method of Ownable
+   * @dev Allows the multisigwallet to transfer control of the contract to a newOwner.
+   * @param newOwner The address to transfer ownership to.
+   */
+  function transferOwnership(address newOwner) onlyMultisigWallet public returns (bool) {
+    require(newOwner != address(0));
+    owner = newOwner;
+    OwnershipTransferred(owner, newOwner);
+    return true;
+  }
+
+  // TODO: Finalize method to burn remaining tokens after sale.
+
 
   ////////////////////////
   /// SAFETY FUNCTIONS ///

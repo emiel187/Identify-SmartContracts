@@ -35,20 +35,8 @@ contract('Whitelist', function (accounts) {
     });
 
 
-    /*// test added successfully
-    it("Should add self successfully to list", function() {
-        return Whitelist.deployed().then(function(instance) {
-            meta = instance;
-            return meta.addSelfAsParticipant();
-        }).then(function () {
-            return meta.participantAmount.call();
-        }).then(function (count) {
-            assert.equal(count.toNumber(), whitelistCount_start + 1, "Should have added 1");
-        });
-    }); */       
-
-    it("Should add other successfully to list", function() {
-        return Whitelist.deployed().then(function(instance) {
+    it("Should add other successfully to list", function () {
+        return Whitelist.deployed().then(function (instance) {
             meta = instance;
             return meta.addParticipant(account_two);
         }).then(function () {
@@ -58,7 +46,7 @@ contract('Whitelist', function (accounts) {
         });
     });
 
-    it("Should not add other successfully to list when not an address", function() {
+    it("Should not add other successfully to list when not an address", function () {
         var inThen = false;
 
         return Whitelist.deployed().then(function (instance) {
@@ -76,7 +64,7 @@ contract('Whitelist', function (accounts) {
         });
     });
 
-    it("Should not add other successfully to list when not an admin", function() {
+    it("Should not add other successfully to list when not an admin", function () {
         var inThen = false;
 
         return Whitelist.deployed().then(function (instance) {
@@ -99,10 +87,10 @@ contract('Whitelist', function (accounts) {
         var inThen;
         return Whitelist.deployed().then(function (instance) {
             meta = instance;
-            return meta.addParticipant(account_one);                
-        }).then(function(){
             return meta.addParticipant(account_one);
-        }).then(function(){
+        }).then(function () {
+            return meta.addParticipant(account_one);
+        }).then(function () {
             inThen = true;
             assert.ok(false, "Should have failed with testrpc");
         }).catch(function () {
@@ -113,8 +101,8 @@ contract('Whitelist', function (accounts) {
                 assert.ok(true, "Failed because already in list");
                 return meta.participantAmount.call();
             }
-        }).then(function(count){
-            assert.equal(count.toNumber(), whitelistCount_start + 1, "Should only have added 1");            
+        }).then(function (count) {
+            assert.equal(count.toNumber(), whitelistCount_start + 1, "Should only have added 1");
         });
     });
 
@@ -139,42 +127,21 @@ contract('Whitelist', function (accounts) {
             }
         });
     });
-    
-        // test that owner can stop
-    it("Only owner can call stop method", function () {
-        var inThen;
 
+    it("Should resume Whitelist", function () {
         return Whitelist.deployed().then(function (instance) {
             meta = instance;
-            return meta.stopRegister({ from: account_two, gas: 3000000 });
-        }).then(function () {
-            inThen = true;
-            assert.ok(false, "Should have failed with testrpc");
-        }).catch(function () {
-            if (inThen) {
-                assert.ok(false, "should have failed directly");
-            } else {
-                assert.ok(true, "Failed because only owner can call stop method");
-            }
-        })
-            ;
-    });
-
-
-    it("Should resume Whitelist", function() {
-        return Whitelist.deployed().then(function(instance) {
-            meta = instance;
             return meta.resumeWhitelist()
-        }).then(function(){
+        }).then(function () {
             return meta.addParticipant(accounts[5]);
-        }).then(function(){
+        }).then(function () {
             return meta.participantAmount.call();
-        }).then(function(count){
-            assert.equal(count.toNumber(), whitelistCount_start +1, "Should have added 1");
+        }).then(function (count) {
+            assert.equal(count.toNumber(), whitelistCount_start + 1, "Should have added 1");
         });
     });
 
-    it("Should not be able to add admins", function () {
+    it("Should not be able to add admins when not an admin", function () {
         var inThen;
 
         return Whitelist.deployed().then(function (instance) {
@@ -185,15 +152,15 @@ contract('Whitelist', function (accounts) {
             assert.ok(false, "Should have failed with testrpc");
         }).catch(function () {
             if (inThen) {
-                assert.ok(false, "should have failed directly");
+                assert.ok(false, "Should have failed directly");
             } else {
-                assert.ok(true, "Failed because only owner can call stop method");
+                assert.ok(true, "Failed because only admins can call stop method");
             }
         })
             ;
     });
 
-    it("Only owner can add to admins", function () {
+    it("Admins can add admins", function () {
         var inThen;
         return Whitelist.deployed().then(function (instance) {
             meta = instance;
@@ -222,11 +189,11 @@ contract('Whitelist', function (accounts) {
         }).then(function () {
             return meta.isAdmin(accounts[5]);
         }).then(function (isAdmin) {
-            assert.equal(isAdmin, false, "Account should not be admin anymore");
+            assert.equal(isAdmin, false, "Account should not be admin");
         })
     });
 
-    it("Should not be able to remove self from admin", function () {
+    it("Should not be able to remove self as admin", function () {
         var inThen;
 
         return Whitelist.deployed().then(function (instance) {
@@ -245,26 +212,26 @@ contract('Whitelist', function (accounts) {
             ;
     });
 
-    it("Should remove an existing account and update the count. After add this one again", function() {
+    it("Should remove an existing account and update the count. After add this one again", function () {
 
         return Whitelist.deployed().then(function (instance) {
             meta = instance;
             return meta.addParticipant(accounts[7])
         }).then(function () {
             return meta.participantAmount.call();
-        }).then(function(count){
+        }).then(function (count) {
             return meta.removeParticipant(accounts[7]);
         }).then(function () {
             return meta.participantAmount.call();
-        }).then(function(count){
-            assert.equal(count.toNumber(),whitelistCount_start, "Should be one less");
+        }).then(function (count) {
+            assert.equal(count.toNumber(), whitelistCount_start, "Should be one less");
             return true;
         }).then(function () {
             return meta.addParticipant(accounts[7])
-        }).then(function(){
-            return meta.participantAmount.call();   
-        }).then(function(count){
-            assert.equal(count.toNumber(),whitelistCount_start + 1, "Should be the same as in the beginning");
+        }).then(function () {
+            return meta.participantAmount.call();
+        }).then(function (count) {
+            assert.equal(count.toNumber(), whitelistCount_start + 1, "Should be the same as in the beginning");
             return true;
         })
             ;
@@ -281,9 +248,9 @@ contract('Whitelist', function (accounts) {
             assert.ok(false, "Should have failed with testrpc");
         }).catch(function (err) {
             if (inThen) {
-                assert.ok(false, "should have failed directly");
+                assert.ok(false, "Should have failed directly");
             } else {
-                assert.ok(true, "Failed because list is paused");
+                assert.ok(true, "Failed because cannot remove self");
             }
         });
     });
@@ -318,10 +285,8 @@ contract('Whitelist', function (accounts) {
             account_eight_balance = balance.toNumber();
             return true;
         }).then(function () {
-
             //fallback function
             return meta.sendTransaction({ from: accounts[8], gas: 3000000, value: 1 });
-
         })
         then(function () {
             return web3.eth.getBalance(accounts[8]);
@@ -332,21 +297,21 @@ contract('Whitelist', function (accounts) {
     });
 
     // test add multipleAddresses
-    it("Should add 3 addresses to the whitelist", function() {
+    it("Should add 3 addresses to the whitelist", function () {
         var account_eight_balance;
-        const multipleAddresses = [accounts[2],accounts[3],accounts[9]]
+        const multipleAddresses = [accounts[2], accounts[3], accounts[9]]
 
         return Whitelist.deployed().then(function (instance) {
             meta = instance;
-            return meta.addMultipleParticipants(multipleAddresses, {from: accounts[0], gas: 3000000});            
-        }).then(function(){
+            return meta.addMultipleParticipants(multipleAddresses, { from: accounts[0], gas: 3000000 });
+        }).then(function () {
             return meta.participantAmount.call();
-        }).then(function(participantAmount){
-            assert.equal(participantAmount.toNumber(), whitelistCount_start+3, "Should have added 3 addresses");
+        }).then(function (participantAmount) {
+            assert.equal(participantAmount.toNumber(), whitelistCount_start + 3, "Should have added 3 addresses");
             return true;
         }).then(() => {
             return meta.isParticipant(accounts[1]);
-        }).then((isParticipant) => {;
+        }).then((isParticipant) => {
             assert.equal(isParticipant, true, "Should be true")
             return meta.isParticipant(accounts[3])
         }).then((isParticipant) => {
@@ -356,9 +321,9 @@ contract('Whitelist', function (accounts) {
             assert.equal(isParticipant, true, "Should be true");
         })
     });
-    
-    
-        it("Should not register when stopped", function () {
+
+
+    it("Should not register when stopped", function () {
         var inThen;
 
         return Whitelist.deployed().then(function (instance) {
@@ -375,7 +340,7 @@ contract('Whitelist', function (accounts) {
             assert.ok(false, "Should have failed with testrpc");
         }).catch(function (err) {
             if (inThen) {
-                assert.ok(false, "should have failed directly");
+                assert.ok(false, "Should have failed directly");
                 return meta.participantAmount.call();
             } else {
                 assert.ok(true, "Failed because stop method is invoked");
@@ -385,35 +350,5 @@ contract('Whitelist', function (accounts) {
             assert.equal(count.toNumber(), whitelistCount_start, "Should be the same");
         });
     });
-
-
-    it("Should use approvaeandcallascontract only as owner", function () {
-        var inThen;
-
-        return Whitelist.deployed().then(function (instance) {
-            meta = instance;
-            return meta.stopRegister();
-        }).then(function () {
-            return meta.getTier(account_empty);
-        }).then(function (tier) {
-            if (tier.toNumber() === 0) {
-                return meta.addParticipant(account_empty);
-            }
-        }).then(function () {
-            inThen = true;
-            assert.ok(false, "Should have failed with testrpc");
-        }).catch(function (err) {
-            if (inThen) {
-                assert.ok(false, "should have failed directly");
-                return meta.participantAmount.call();
-            } else {
-                assert.ok(true, "Failed because stop method is invoked");
-                return meta.participantAmount.call();
-            }
-        }).then(function (count) {
-            assert.equal(count.toNumber(), whitelistCount_start, "Should be the same");
-        });
-    });
-
 
 });
