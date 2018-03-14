@@ -4,6 +4,7 @@
 
 var Presale = artifacts.require("Presale");
 var Identify = artifacts.require("Identify");
+var MultiSigWallet = artifacts.require("MultiSigWallet");
 
 contract('Identify', function (accounts) {
 
@@ -17,22 +18,30 @@ contract('Identify', function (accounts) {
 
     var meta;
 
-    var identifyAddress;
 
     before(function () {
-        try {
-            // make accounts[0] owner of Identify token contract. Not the presale contract anymore
-            var meta;
-            return Presale.deployed().then(function (instance) {
-                meta = instance;
-                identifyAddress = Identify.address;
-                return meta.transferOwnershipToken(accounts[0]);
-            });
-        } catch (err) {
-            console.log('Already owner of contract. Just continue the testing.' + err);
-            return true;
-        }
+        // make accounts[0] owner of Identify token contract. Not the presale contract anymore
+        var new_owner = accounts[0].substring(2, (accounts[0].length));
 
+        // transferownership token
+        var function_data = "0x9ae6892b";
+        var data = function_data + "000000000000000000000000" + new_owner;
+
+        return MultiSigWallet.deployed().then(function (instance) {
+            metaMultisig = instance;
+            return metaMultisig.submitTransaction(Presale.address, 0, data, { from: accounts[0], gas: 3000000 });
+        }).then(function () {
+            return metaMultisig.transactionCount.call();
+        }).then(function (transactioncount) {
+            var transaction_id = (transactioncount.toNumber() - 1);
+            return metaMultisig.confirmTransaction(transaction_id, { from: account_two, gas: 3000000 });
+        }).then(function () {
+            return Identify.deployed().then(function (instance) {
+                return instance.owner.call();
+            })
+        }).then(function (owner) {
+            assert.equal(owner, accounts[0], "Should transfered successful");
+        });
     });
 
     beforeEach(function () {
@@ -51,6 +60,7 @@ contract('Identify', function (accounts) {
     });
 
 
+
     it('Should be able to use the constructor', function (done) {
 
         Identify.new().then(
@@ -67,7 +77,7 @@ contract('Identify', function (accounts) {
 
         return Identify.deployed().then(function (instance) {
             meta = instance;
-            return meta.transferFrom(identifyAddress, account_one, 20000000000);
+            return meta.transferFrom(Identify.address, account_one, 20000000000);
         }).then(function () {
             return meta.balanceOf(account_one);
         })
@@ -131,7 +141,7 @@ contract('Identify', function (accounts) {
         return Identify.deployed().then(function (instance) {
             meta = instance;
             // mint 10000000000 so the totalsupply will be 10000000000 or higher
-            return meta.transferFrom(identifyAddress, account_one, 10000000000, { from: account_empty, gas: 3000000 });
+            return meta.transferFrom(Identify.address, account_one, 10000000000, { from: account_empty, gas: 3000000 });
         }).then(function (err) {
             inThen = true;
             assert.ok(false, "Should fail")
@@ -233,7 +243,7 @@ contract('Identify', function (accounts) {
 
         return Identify.deployed().then(function (instance) {
             meta = instance;
-            return meta.transferFrom(identifyAddress, account_two, 10000000000);
+            return meta.transferFrom(Identify.address, account_two, 10000000000);
         }).then(function () {
             return meta.transferFrom(account_two, account_empty, 10000000000, { from: account_two, gas: 3000000 });
         }).then(function () {
@@ -254,7 +264,7 @@ contract('Identify', function (accounts) {
 
         return Identify.deployed().then(function (instance) {
             meta = instance;
-            return meta.transferFrom(identifyAddress, account_one, 10000000000);
+            return meta.transferFrom(Identify.address, account_one, 10000000000);
         }).then(function () {
             return meta.burn(account_one, 10000000000, { from: account_empty, gas: 3000000 });
         }).then(function (err) {
@@ -430,8 +440,7 @@ contract('Identify', function (accounts) {
             } else {
                 assert.ok(true, "Failed successful");
             }
-        })
-            ;
+        });
     });
 
     it("Should use approveandcallascontract properly", function () {
