@@ -16,14 +16,14 @@ contract('MultiSigWallet', function (accounts) {
     var transactioncount_start;
     var balance_start;
 
-    before(async function () {
-        metaPresale = await Presale.deployed();
-        metaIdentify = await Identify.deployed();
-        // make accounts[0] owner of presale
-        /*return Presale.deployed().then(function (instance) {
-            return instance.transferOwnershipToken(account_one);
-        });*/
-    });
+   /* before(async function () {
+         metaPresale = await Presale.deployed();
+         metaIdentify = await Identify.deployed();
+         // multisig is owner of presale, presale is owner of token. So make account_one owner of token
+         return Presale.deployed().then(function (instance) {
+             return instance.transferOwnershipToken(account_one,{from: MultiSigWallet.address});
+         });
+     });*/
 
     beforeEach(function () {
         MultiSigWallet.deployed().then(function (instance) {
@@ -43,7 +43,7 @@ contract('MultiSigWallet', function (accounts) {
             '0xff95174a8978f7aff48537f4741135f523079d0b', // accounts[1]
             '0xbb848227f23c08fa38da659d8041112ea5a2b7de' // accounts[2]
         ], 2,
-            '0xbb848227f23c08fa38da659d8041112ea5a2b7de' // random Identify address
+            Identify.address
         ).then(
             function (multisig) {
                 multisig.isOwner('0xff95174a8978f7aff48537f4741135f523079d0b').then(
@@ -153,22 +153,20 @@ contract('MultiSigWallet', function (accounts) {
         }).then(function (isconfirmed) {
             assert.ok(!isconfirmed, "Should not be confirmed");
             return metaMultisig.confirmTransaction(firstTransaction_id, { from: account_two, gas: 3000000 });
-        })
-            .then(function () {
-                return metaMultisig.getConfirmationCount(firstTransaction_id);
-            }).then(function (confirmations) {
-                assert.equal(confirmations.toNumber(), 2, "Should be 2");
-                return metaMultisig.isConfirmed(firstTransaction_id);
-            }).then(function (isconfirmed) {
-                assert.ok(isconfirmed, "Should be confirmed");
-                // confirmed, so transaction should be executed
-                return web3.eth.getBalance(metaMultisig.address);
-            }).then(function (balance) {
-                // must be smaller or equal to the amount we sent. But higher than the amount we send + 50%. 
-                // Cause could be a bit less than the original - 1000000000 of gas costs
-                assert.ok((balance <= (balance_start - 1000000000)) && (balance >= (balance_start - 1500000000)), "Should be less");
-            })
-            ;
+        }).then(function () {
+            return metaMultisig.getConfirmationCount(firstTransaction_id);
+        }).then(function (confirmations) {
+            assert.equal(confirmations.toNumber(), 2, "Should be 2");
+            return metaMultisig.isConfirmed(firstTransaction_id);
+        }).then(function (isconfirmed) {
+            assert.ok(isconfirmed, "Should be confirmed");
+            // confirmed, so transaction should be executed
+            return web3.eth.getBalance(metaMultisig.address);
+        }).then(function (balance) {
+            // must be smaller or equal to the amount we sent. But higher than the amount we send + 50%. 
+            // Cause could be a bit less than the original - 1000000000 of gas costs
+            assert.ok((balance <= (balance_start - 1000000000)) && (balance >= (balance_start - 1500000000)), "Should be less");
+        });
     });
 
     // fail execute transaction cause already executed
@@ -273,7 +271,7 @@ contract('MultiSigWallet', function (accounts) {
             return metaMultisig.transactionCount.call();
         }).then(function (transactioncount) {
             beginTransaction = transactioncount.toNumber();
-            return metaMultisig.submitTransaction(account_one, 1000000000, "", { from: account_two, gas: 3000000 });
+            return metaMultisig.submitTransaction(account_one, 1000000000, "");
         }).then(function () {
             firstTransaction_count = beginTransaction + 1;
             firstTransaction_id = beginTransaction;
@@ -294,24 +292,23 @@ contract('MultiSigWallet', function (accounts) {
     });
 
 /*
-    // get Identify token amount
-    it("Should display Identify tokens properly", function () {
-
-        var Identify_start;
-
-        return MultiSigWallet.deployed().then(function (instance) {
-            metaMultisig = instance;
-            return metaMultisig.getIdentifyAmount();
-        }).then(function (tokens) {
-            Identify_start = tokens.toNumber();
-            // change owner of Identify contract
-            return metaIdentify.transferFrom(Identify.address, MultiSigWallet.address, 10000000000);
-        }).then(function () {
-            return metaMultisig.getIdentifyAmount();
-        }).then(function (tokens) {
-            return assert.equal(tokens.toNumber(), Identify_start + 10000000000);
+        // get Identify token amount
+        it("Should display Identify tokens properly", function () {
+            var Identify_start;
+    
+            return MultiSigWallet.deployed().then(function (instance) {
+                metaMultisig = instance;
+                return metaMultisig.getIdentifyAmount();
+            }).then(function (tokens) {
+                Identify_start = tokens.toNumber();
+                // change owner of Identify contract
+                return metaIdentify.transferFrom(Identify.address, MultiSigWallet.address, 10000000000, {from:MultiSigWallet.address});
+            }).then(function () {
+                return metaMultisig.getIdentifyAmount();
+            }).then(function (tokens) {
+                return assert.equal(tokens.toNumber(), Identify_start + 10000000000);
+            });
         });
-    });
 */
 
     it("Should add owner after confirmations+ required stays at 2", function () {
@@ -512,60 +509,60 @@ contract('MultiSigWallet', function (accounts) {
     });
 
     // transfer Identify token amount -> 0x7926902e
-/*
-    it("Should transfer Identify tokens to an account after confirmation", function () {
-        var transaction_id;
-        var multisig_Identify_start;
-        var account_two_Identify_start;
-
-        var to_account = account_two.substring(2, (account_two.length));
-        //10000000000 in hex is 2540BE400
-        var amount_to_send = "00000000000000000000000000000000000000000000000000000002540BE400";
-
-        var function_data = "0x7926902E";
-
-        return MultiSigWallet.deployed().then(function (instance) {
-            metaMultisig = instance;
-            return metaIdentify.transferFrom(Identify.address, MultiSigWallet.address, 10000000000);
-        }).then(function () {
-            return metaMultisig.getIdentifyAmount();
-        }).then(function (tokens) {
-            multisig_Identify_start = tokens.toNumber();
-            return metaIdentify.balanceOf(account_two);
-        }).then(function (balance) {
-            account_two_Identify_start = balance.toNumber();
-            var data = function_data + "000000000000000000000000" + to_account + amount_to_send;
-            return metaMultisig.submitTransaction(metaMultisig.address, 0, data, { from: account_three, gas: 3000000 });
-        }).then(function () {
-            return metaMultisig.getIdentifyAmount();
-        }).then(function (tokens) {
-            assert.ok(tokens.toNumber() === multisig_Identify_start, "Should still be the same, because not yet confirmed transaction");
-        }).then(function () {
-            return metaMultisig.transactionCount.call();
-        }).then(function (transactioncount) {
-            var transaction_id = (transactioncount.toNumber() - 1);
-            return metaMultisig.confirmTransaction(transaction_id, { from: account_two, gas: 3000000 });
-        }).then(function () {
-            return metaMultisig.getIdentifyAmount();
-        }).then(function (tokens) {
-            assert.equal(tokens.toNumber(), (multisig_Identify_start - 10000000000));
-            return metaIdentify.balanceOf(account_two);
-        }).then(function (balance) {
-            assert.equal(balance.toNumber(), (account_two_Identify_start + 10000000000));
+    /*
+        it("Should transfer Identify tokens to an account after confirmation", function () {
+            var transaction_id;
+            var multisig_Identify_start;
+            var account_two_Identify_start;
+    
+            var to_account = account_two.substring(2, (account_two.length));
+            //10000000000 in hex is 2540BE400
+            var amount_to_send = "00000000000000000000000000000000000000000000000000000002540BE400";
+    
+            var function_data = "0x7926902E";
+    
+            return MultiSigWallet.deployed().then(function (instance) {
+                metaMultisig = instance;
+                return metaIdentify.transferFrom(Identify.address, MultiSigWallet.address, 10000000000);
+            }).then(function () {
+                return metaMultisig.getIdentifyAmount();
+            }).then(function (tokens) {
+                multisig_Identify_start = tokens.toNumber();
+                return metaIdentify.balanceOf(account_two);
+            }).then(function (balance) {
+                account_two_Identify_start = balance.toNumber();
+                var data = function_data + "000000000000000000000000" + to_account + amount_to_send;
+                return metaMultisig.submitTransaction(metaMultisig.address, 0, data, { from: account_three, gas: 3000000 });
+            }).then(function () {
+                return metaMultisig.getIdentifyAmount();
+            }).then(function (tokens) {
+                assert.ok(tokens.toNumber() === multisig_Identify_start, "Should still be the same, because not yet confirmed transaction");
+            }).then(function () {
+                return metaMultisig.transactionCount.call();
+            }).then(function (transactioncount) {
+                var transaction_id = (transactioncount.toNumber() - 1);
+                return metaMultisig.confirmTransaction(transaction_id, { from: account_two, gas: 3000000 });
+            }).then(function () {
+                return metaMultisig.getIdentifyAmount();
+            }).then(function (tokens) {
+                assert.equal(tokens.toNumber(), (multisig_Identify_start - 10000000000));
+                return metaIdentify.balanceOf(account_two);
+            }).then(function (balance) {
+                assert.equal(balance.toNumber(), (account_two_Identify_start + 10000000000));
+            });
         });
-    });
-
-
-    // test getTransactionIds
-    it("Should return getTransactionIds properly", function () {
-
-        return MultiSigWallet.deployed().then(function (instance) {
-            metaMultisig = instance;
-            return metaMultisig.getTransactionIds(0, 13, true, true);
-        }).then(function (transactionids) {
-            return assert.equal(transactionids.length, 13, "Should have 13 transactions as return value");
-        });
-    });*/
+    
+    
+        // test getTransactionIds
+        it("Should return getTransactionIds properly", function () {
+    
+            return MultiSigWallet.deployed().then(function (instance) {
+                metaMultisig = instance;
+                return metaMultisig.getTransactionIds(0, 13, true, true);
+            }).then(function (transactionids) {
+                return assert.equal(transactionids.length, 13, "Should have 13 transactions as return value");
+            });
+        });*/
 
     // test getTransactionIds
     it("Should fail when more than 13 transactions at getTransactionIds", function () {
@@ -583,25 +580,25 @@ contract('MultiSigWallet', function (accounts) {
         });
     });
 
-/*
-    // test getTransactionCount
-    it("Should return 13 at getTransactionCount", function () {
-        return MultiSigWallet.deployed().then(function (instance) {
-            metaMultisig = instance;
-            return metaMultisig.getTransactionCount(true, true);
-        }).then(function (transactioncount) {
-            return assert.equal(transactioncount, 13, "Should have 13 transactions as return value");
+    /*
+        // test getTransactionCount
+        it("Should return 13 at getTransactionCount", function () {
+            return MultiSigWallet.deployed().then(function (instance) {
+                metaMultisig = instance;
+                return metaMultisig.getTransactionCount(true, true);
+            }).then(function (transactioncount) {
+                return assert.equal(transactioncount, 13, "Should have 13 transactions as return value");
+            });
         });
-    });
-    // test getTransactionCount
-    it("Should have 8 executed transactions", function () {
-        return MultiSigWallet.deployed().then(function (instance) {
-            metaMultisig = instance;
-            return metaMultisig.getTransactionCount(false, true);
-        }).then(function (transactioncount) {
-            return assert.equal(transactioncount, 8, "Should have 8 executed transactions as return value");
-        });
-    });*/
+        // test getTransactionCount
+        it("Should have 8 executed transactions", function () {
+            return MultiSigWallet.deployed().then(function (instance) {
+                metaMultisig = instance;
+                return metaMultisig.getTransactionCount(false, true);
+            }).then(function (transactioncount) {
+                return assert.equal(transactioncount, 8, "Should have 8 executed transactions as return value");
+            });
+        });*/
 
     // test notNull modifier
     it("Should fail when owners address is invalid", function () {
@@ -621,17 +618,21 @@ contract('MultiSigWallet', function (accounts) {
 
 
     // transfer ownership of token
-    it("Should transfer ownership of presale to multisigwallet", function () {
+    it("Should transfer ownership of token through presale to multisigwallet", function () {
 
         var new_owner = account_one.substring(2, (account_one.length));
         // transferownership token
         var function_data = "0x9ae6892b";
+        console.log(account_one);
+        console.log(new_owner);
+        console.log(metaPresale.owner.call());
+        //console.log(Identify.owner);
         var data = function_data + "000000000000000000000000" + new_owner;
 
         return MultiSigWallet.deployed().then(function (instance) {
             metaMultisig = instance;
-            console.log(metaPresale.address);
-            return metaMultisig.submitTransaction(metaPresale.address, 0, data, { from: account_one, gas: 3000000 });
+            console.log(Presale.address);
+            return metaMultisig.submitTransaction(Presale.address, 0, data, { from: account_one, gas: 3000000 });
         })/*.then(function () {
             return metaMultisig.transactionCount.call();
         }).then(function (transactioncount) {
