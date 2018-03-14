@@ -18,11 +18,6 @@ module.exports = function(deployer, network) {
             25, // minimum ETH
             1000 // maximum ETH
         ).then(function(){
-            // make multisig owner of presale
-            return Presale.deployed().then(function(instance){
-                return instance.transferOwnership(Multisig.address);
-            })
-        }).then(function(){
                 return Identify.deployed().then(function(instance){
                     return instance.transferOwnership(Presale.address);
                 })
@@ -39,11 +34,6 @@ module.exports = function(deployer, network) {
             25, // minimum ETH
             1000 // maximum ETH
         ).then(function(){
-            // make multisig owner of presale
-            return Presale.deployed().then(function(instance){
-                return instance.transferOwnership(Multisig.address);
-            })
-        }).then(function(){
                 return Identify.deployed().then(function(instance){
                     return instance.transferOwnership(Presale.address);
                 });
