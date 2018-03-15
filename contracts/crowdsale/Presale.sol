@@ -56,6 +56,8 @@ contract Presale is Ownable {
   uint256 public maximumWEI;
   // a boolean to check if the presale is paused
   bool public paused = false;
+  // a boolean to check if the presale is finalized
+  bool public isFinalized = false;
 
   /**
    * event for token purchase logging
@@ -104,7 +106,13 @@ contract Presale is Ownable {
     require(!paused);
     _;
   }
-
+  /**
+   * modifier to check if the presale is not finalized
+   */
+  modifier whenNotFinalized() {
+    require(!isFinalized);
+    _;
+  }
   /**
    * modifier to check only multisigwallet can do this operation
    */
@@ -156,7 +164,7 @@ contract Presale is Ownable {
   }
 
   // low level token purchase function
-  function buyTokens(address beneficiary) isInWhitelist(beneficiary) whenNotPaused public payable returns (bool) {
+  function buyTokens(address beneficiary) isInWhitelist(beneficiary) whenNotPaused whenNotFinalized public payable returns (bool) {
     require(beneficiary != address(0));
     require(validPurchase());
     require(!hasEnded());
@@ -166,7 +174,7 @@ contract Presale is Ownable {
 
     // calculate token amount to be created
     uint256 tokens = getTokenAmount(weiAmount);
-    
+    require(tokenRaised.add(tokens) <= capTokens);
     // update state
     weiRaised = weiRaised.add(weiAmount);
     tokenRaised = tokenRaised.add(tokens);
@@ -245,8 +253,23 @@ contract Presale is Ownable {
     return true;
   }
 
-  // TODO: Finalize method to burn remaining tokens after sale.
+   /**
+   * @dev Finalize the presale.
+   */  
+   function finalize() onlyMultisigWallet whenNotFinalized public returns (bool) {
+    require(hasEnded());
 
+    // check if cap is reached
+    if (!(capWEI == weiRaised)) {
+      // calculate remaining tokens
+      uint256 remainingTokens = capTokens.sub(tokenRaised);
+      // burn remaining tokens
+      require(token.burn(tokenAddress, remainingTokens));    
+    }
+    require(token.transferOwnership(wallet));
+    isFinalized = true;
+    return true;
+  }
 
   ////////////////////////
   /// SAFETY FUNCTIONS ///
