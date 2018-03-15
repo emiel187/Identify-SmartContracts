@@ -481,5 +481,35 @@ contract('Presale', function (accounts) {
         })
     });
 
-
+    // test when the cap is almost reached but minimum is to much to fill in gap
+    it('Should drop minimumETH check when gap to cap is less than minimumETH', function () {
+        var metaPresaleV5;
+        var starttime = Math.round((Date.now() / 1000))
+        
+        Presale.new(starttime, metaMultiSig.address, metaIdentify.address, metaWhitelist.address, 
+            3, // capETH
+            15750000, //capTokens
+            2, // minimumETH
+            10 // maximumETH
+        ).then(function(instance) {
+            metaPresaleV5 = instance;
+            var new_owner = metaPresaleV5.address.substring(2, (metaPresaleV5.address.length));
+            var function_data = "0xf2fde38b";
+            var data = function_data + "000000000000000000000000" + new_owner;
+            // make presaleV5 owner of token        
+            return metaMultisig.submitTransaction(metaIdentify.address, 0, data, { from: account_one, gas: 3000000 });
+        }).then(function () {
+            return metaMultisig.transactionCount.call();
+        }).then(function (transactioncount) {
+            var transaction_id = (transactioncount.toNumber() - 1);
+            return metaMultisig.confirmTransaction(transaction_id, { from: account_two, gas: 3000000 });
+        }).then(function () {
+            return metaIdentify.owner.call();
+        }).then(function (owner) {
+            assert.equal(owner, metaPresaleV5.address, "Should transfered successful");
+            return metaPresaleV5.sendTransaction({ from: account_one, gas: 3000000, value: web3.toWei('2', 'ether') });
+        }).then(function(){
+            return metaPresaleV5.sendTransaction({ from: account_one, gas: 3000000, value: web3.toWei('1', 'ether') });            
+        });
+    });
 });

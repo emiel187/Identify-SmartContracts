@@ -225,9 +225,15 @@ contract Presale is Ownable {
   function validPurchase() internal view returns (bool) {
     bool withinPeriod = now >= startTime && now <= endTime;
     bool nonZeroPurchase = msg.value != 0;
-    bool minimumWEIReached = msg.value >= minimumWEI;
     bool underMaximumWEI = msg.value <= maximumWEI;
     bool withinCap = weiRaised.add(msg.value) <= capWEI;
+    bool minimumWEIReached;
+    // check to fill in last gap
+    if ( capWEI.sub(weiRaised) < minimumWEI) {
+      minimumWEIReached = true;
+    } else {
+      minimumWEIReached = msg.value >= minimumWEI;
+    }
     return (withinPeriod && nonZeroPurchase) && (withinCap && (minimumWEIReached && underMaximumWEI));
 
   }
