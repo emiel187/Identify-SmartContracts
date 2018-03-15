@@ -18,7 +18,6 @@ contract('Identify', function (accounts) {
 
     var meta;
 
-
     before(function () {
         // make accounts[0] owner of Identify token contract. Not the presale contract anymore
         var new_owner = accounts[0].substring(2, (accounts[0].length));
@@ -59,8 +58,6 @@ contract('Identify', function (accounts) {
         });
     });
 
-
-
     it('Should be able to use the constructor', function (done) {
 
         Identify.new().then(
@@ -87,7 +84,7 @@ contract('Identify', function (accounts) {
         }).then(function (balance) {
             assert.equal(balance.toNumber(), account_two_start_balance, "Balance still should be start balance");
             return true;
-        }).then(function (r) {
+        }).then(function () {
             // transfer half to account 2
             return meta.transferFrom(account_one, account_two, 10000000000);
         }).then(function () {
@@ -105,8 +102,6 @@ contract('Identify', function (accounts) {
         });
     });
 
-
-
     it("Should fail when address for transfer is invalid", function () {
         var inThen = false;
 
@@ -118,9 +113,9 @@ contract('Identify', function (accounts) {
         }).then(function () {
             // invalid address
             return meta.transfer("invalidaddress", 100);
-        }).then(function (err) {
+        }).then(function () {
             inThen = true;
-            assert.ok(false, "should fail")
+            assert.ok(false, "Should fail")
         }).catch(function (err) {
             if (inThen) {
                 return assert.ok(false, "Should have failed because invalid address");
@@ -130,7 +125,6 @@ contract('Identify', function (accounts) {
         });
     });
 
-
     it("Should not transferfrom tokens if not owner of contract", function () {
         var inThen = false;
 
@@ -138,7 +132,7 @@ contract('Identify', function (accounts) {
             meta = instance;
             // mint 10000000000 so the totalsupply will be 10000000000 or higher
             return meta.transferFrom(Identify.address, account_one, 10000000000, { from: account_empty, gas: 3000000 });
-        }).then(function (err) {
+        }).then(function () {
             inThen = true;
             assert.ok(false, "Should fail")
         }).catch(function (err) {
@@ -158,7 +152,7 @@ contract('Identify', function (accounts) {
             assert.equal(account_empty_start_balance, 0, "Balance should be 0");
             // transfer from an empty account
             return meta.transfer(account_one, 10000000000, { from: account_empty, gas: 3000000 });
-        }).then(function (r) {
+        }).then(function () {
             //extra boolean to check
             inThen = true;
             assert.ok(false, "Should fail");
@@ -171,7 +165,6 @@ contract('Identify', function (accounts) {
         });
     });
 
-
     it("Should throw error when disable transfer is invoked by owner", function () {
         var inThen = false;
 
@@ -179,12 +172,12 @@ contract('Identify', function (accounts) {
             meta = instance;
             assert.equal(account_empty_start_balance, 0, "Balance should be 0");
             return true;
-        }).then(function (r) {
+        }).then(function () {
             //disable transfers
             return meta.disableTransfer();
-        }).then(function (r) {
+        }).then(function () {
             return meta.transfer(account_two, 10000000000, { from: account_one, gas: 3000000 });
-        }).then(function (err) {
+        }).then(function () {
             inThen = true;
             assert.ok(false, "Should fail")
         }).catch(function (err) {
@@ -212,7 +205,6 @@ contract('Identify', function (accounts) {
         });
     });
 
-
     it("Should not burn more tokens than owner has", function () {
         var inThen = false;
 
@@ -230,8 +222,6 @@ contract('Identify', function (accounts) {
             }
         });
     });
-
-
 
     it("Should only transferfrom from other accounts when owner", function () {
         var inThen;
@@ -261,7 +251,7 @@ contract('Identify', function (accounts) {
             return meta.transferFrom(Identify.address, account_one, 10000000000);
         }).then(function () {
             return meta.burn(account_one, 10000000000, { from: account_empty, gas: 3000000 });
-        }).then(function (err) {
+        }).then(function () {
             inThen = true;
             assert.ok(false, "Should fail")
         }).catch(function (err) {
@@ -273,10 +263,8 @@ contract('Identify', function (accounts) {
         });
     });
 
-
     it("Should not transfer ownership when not owner of contract", function () {
         var inThen = false;
-
 
         return Identify.deployed().then(function (instance) {
             meta = instance;
@@ -292,10 +280,9 @@ contract('Identify', function (accounts) {
             }
         });
     });
-    // test approve / allow
+
 
     it("Should approve successful tokens and let the approver spend them", function () {
-
 
         return Identify.deployed().then(function (instance) {
             meta = instance;
@@ -344,8 +331,6 @@ contract('Identify', function (accounts) {
         });
     });
 
-    // test already approved to increase approval
-
     it("Should fail when overwriting approval", function () {
         var inThen = false;
 
@@ -382,7 +367,7 @@ contract('Identify', function (accounts) {
         }).then(function () {
             return meta.balanceOf(account_two);
         }).then(function (balance) {
-            return assert.equal(balance.toNumber(), account_two_start_balance - 300, "Should substracted 300 of account_two");
+            return assert.equal(balance.toNumber(), account_two_start_balance - 300, "Should substract 300 from account_two");
         });
     });
 
@@ -412,25 +397,25 @@ contract('Identify', function (accounts) {
             return assert.equal(spendAmount.toNumber(), 150, "Should be 150");
         });
     });
-    /*
-        it("Should fail when already approved through approveandcall method", function () {
-            var inThen = false;
-    
-            return Identify.deployed().then(function (instance) {
-                meta = instance;
-                return meta.approveAndCall(account_one, 150, "extradata", { from: account_two });
-            }).then(function () {
-                inThen = true;
-                assert.ok(false, "Should fail")
-            }).catch(function (err) {
-                if (inThen) {
-                    assert.ok(false, "Should have failed because already an approved amount");
-                } else {
-                    assert.ok(true, "Failed successful");
-                }
-            });
+
+    it("Should fail when already approved through approveandcall method", function () {
+        var inThen = false;
+
+        return Identify.deployed().then(function (instance) {
+            meta = instance;
+            return meta.approveAndCall(account_one, 150, "extradata", { from: account_two });
+        }).then(function () {
+            inThen = true;
+            assert.ok(false, "Should fail")
+        }).catch(function (err) {
+            if (inThen) {
+                assert.ok(false, "Should have failed because already an approved amount");
+            } else {
+                assert.ok(true, "Failed successful");
+            }
         });
-    */
+    });
+
     it("Should use approveandcallascontract properly", function () {
 
         return Identify.deployed().then(function (instance) {
@@ -439,7 +424,7 @@ contract('Identify', function (accounts) {
         }).then(function () {
             return meta.allowance.call(meta.address, account_two);
         }).then(function (allowance) {
-            return assert.equal(allowance.toNumber(), 200), "Should have 200 allowed";
+            return assert.equal(allowance.toNumber(), 200, "Should have 200 allowed");
         });
     });
 
