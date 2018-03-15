@@ -9,6 +9,7 @@
     "test": "truffle test --network testing"
   },
   "dependencies": {
+    "ethereumjs-testrpc": "^6.0.3",
     "ganache-cli": "^6.0.3",
     "js-sha256": "^0.8.0",
     "sinon": "^4.4.6",

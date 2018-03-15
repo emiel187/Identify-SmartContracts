@@ -77,9 +77,9 @@ contract('Presale', function (accounts) {
             assert.ok(false, "Should have failed");
         }).catch(function (err) {
             if (inThen) {
-                assert.ok(false, "Should have failed");
+                return assert.ok(false, "Should have failed");
             } else {
-                assert.ok(true, "Failed succesfull");
+                return assert.ok(true, "Failed succesfull");
             }
         });
     });
@@ -95,9 +95,9 @@ contract('Presale', function (accounts) {
             assert.ok(false, "Should have failed");
         }).catch(function (err) {
             if (inThen) {
-                assert.ok(false, "Should have failed");
+                return assert.ok(false, "Should have failed");
             } else {
-                assert.ok(true, "Failed succesfull");
+                return assert.ok(true, "Failed succesfull");
             }
         });
     });
@@ -143,9 +143,9 @@ contract('Presale', function (accounts) {
             assert.ok(false, "Should have failed");
         }).catch(function (err) {
             if (inThen) {
-                assert.ok(false, "Should have failed");
+                return assert.ok(false, "Should have failed");
             } else {
-                assert.ok(true, "Failed succesfull");
+                return assert.ok(true, "Failed succesfull");
             }
         });
     });
@@ -176,9 +176,9 @@ contract('Presale', function (accounts) {
             assert.ok(false, "Should have failed");
         }).catch(function (err) {
             if (inThen) {
-                assert.ok(false, "Should have failed");
+                return assert.ok(false, "Should have failed");
             } else {
-                assert.ok(true, "Failed succesfull");
+                return assert.ok(true, "Failed succesfull");
             }
         });
     });
@@ -202,7 +202,7 @@ contract('Presale', function (accounts) {
         }).then(function () {
             return metaIdentify.owner.call();
         }).then(function (owner) {
-            assert.equal(owner, metaPresaleV2.address, "Should transfered successful");
+            return assert.equal(owner, metaPresaleV2.address, "Should transfered successful");
         });
     });
 
@@ -233,9 +233,9 @@ contract('Presale', function (accounts) {
             assert.ok(false, "Should have failed");
         }).catch(function (err) {
             if (inThen) {
-                assert.ok(false, "Should have failed");
+                return assert.ok(false, "Should have failed");
             } else {
-                assert.ok(true, "Failed succesfull");
+                return assert.ok(true, "Failed succesfull");
             }
         });
     });
@@ -249,9 +249,9 @@ contract('Presale', function (accounts) {
             assert.ok(false, "Should have failed");
         }).catch(function (err) {
             if (inThen) {
-                assert.ok(false, "Should have failed");
+                return assert.ok(false, "Should have failed");
             } else {
-                assert.ok(true, "Failed succesfull");
+                return assert.ok(true, "Failed succesfull");
             }
         });
     });
@@ -265,9 +265,9 @@ contract('Presale', function (accounts) {
             assert.ok(false, "Should have failed");
         }).catch(function (err) {
             if (inThen) {
-                assert.ok(false, "Should have failed");
+                return assert.ok(false, "Should have failed");
             } else {
-                assert.ok(true, "Failed succesfull");
+                return assert.ok(true, "Failed succesfull");
             }
         });
     });
@@ -329,9 +329,9 @@ contract('Presale', function (accounts) {
             assert.ok(false, "Should have failed");
         }).catch(function (err) {
             if (inThen) {
-                assert.ok(false, "Should have failed");
+                return assert.ok(false, "Should have failed");
             } else {
-                assert.ok(true, "Failed succesfull");
+                return assert.ok(true, "Failed succesfull");
             }
         });
     });
@@ -352,9 +352,9 @@ contract('Presale', function (accounts) {
             assert.ok(false, "Should have failed");
         }).catch(function (err) {
             if (inThen) {
-                assert.ok(false, "Should have failed");
+                return assert.ok(false, "Should have failed");
             } else {
-                assert.ok(true, "Failed succesfull");
+                return assert.ok(true, "Failed succesfull");
             }
         });
     });
@@ -380,7 +380,7 @@ contract('Presale', function (accounts) {
         }).then(function () {
             return metaPresale.owner.call();
         }).then(function (owner) {
-            assert.equal(owner, account_two, "Should transfered successful");
+            return assert.equal(owner, account_two, "Should transfered successful");
         });
     });
 
@@ -406,7 +406,7 @@ contract('Presale', function (accounts) {
         }).then(function () {
             return metaPresale.isFinalized.call();
         }).then(function (finalized) {
-            assert.equal(finalized, false, "Should not be finalized");
+            return assert.equal(finalized, false, "Should not be finalized");
         })
     });
     // test finalize can be called by multisig only
@@ -427,9 +427,9 @@ contract('Presale', function (accounts) {
             assert.ok(false, "Should have failed");
         }).catch(function (err) {
             if (inThen) {
-                assert.ok(false, "Should have failed");
+                return assert.ok(false, "Should have failed");
             } else {
-                assert.ok(true, "Failed succesfull");
+                return assert.ok(true, "Failed succesfull");
             }
         });
     });
@@ -477,7 +477,7 @@ contract('Presale', function (accounts) {
             assert.equal(finalized, true, "Should be finalized");
             return metaIdentify.owner.call()
         }).then(function (owner) {
-            assert.equal(owner, metaMultisig.address, "Should be the multisig after finalization");
+            return assert.equal(owner, metaMultisig.address, "Should be the multisig after finalization");
         })
     });
 
@@ -486,7 +486,7 @@ contract('Presale', function (accounts) {
         var metaPresaleV5;
         var starttime = Math.round((Date.now() / 1000))
         
-        Presale.new(starttime, metaMultiSig.address, metaIdentify.address, metaWhitelist.address, 
+        return Presale.new(starttime, metaMultiSig.address, metaIdentify.address, metaWhitelist.address, 
             3, // capETH
             15750000, //capTokens
             2, // minimumETH

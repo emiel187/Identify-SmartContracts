@@ -20,6 +20,7 @@ contract('Whitelist', function (accounts) {
             return meta.participantAmount.call();
         }).then(function (count) {
             whitelistCount_start = count.toNumber();
+            return true;
         });
     });
 
@@ -42,7 +43,7 @@ contract('Whitelist', function (accounts) {
         }).then(function () {
             return meta.participantAmount.call();
         }).then(function (count) {
-            assert.equal(count.toNumber(), whitelistCount_start + 1, "Should have added 1");
+            return assert.equal(count.toNumber(), whitelistCount_start + 1, "Should have added 1");
         });
     });
 
@@ -57,9 +58,9 @@ contract('Whitelist', function (accounts) {
             assert.ok(false, "Should have failed");
         }).catch(function (err) {
             if (inThen) {
-                assert.ok(false, "Should have failed");
+                return assert.ok(false, "Should have failed");
             } else {
-                assert.ok(true, "Failed successfully");
+                return assert.ok(true, "Failed successfully");
             }
         });
     });
@@ -75,9 +76,9 @@ contract('Whitelist', function (accounts) {
             assert.ok(false, "Should have failed");
         }).catch(function (err) {
             if (inThen) {
-                assert.ok(false, "Should have failed");
+                return assert.ok(false, "Should have failed");
             } else {
-                assert.ok(true, "Failed successfully");
+                return assert.ok(true, "Failed successfully");
             }
         });
     });
@@ -102,7 +103,7 @@ contract('Whitelist', function (accounts) {
                 return meta.participantAmount.call();
             }
         }).then(function (count) {
-            assert.equal(count.toNumber(), whitelistCount_start + 1, "Should only have added 1");
+            return assert.equal(count.toNumber(), whitelistCount_start + 1, "Should only have added 1");
         });
     });
 
@@ -121,9 +122,9 @@ contract('Whitelist', function (accounts) {
             assert.ok(false, "Should have failed with testrpc");
         }).catch(function (err) {
             if (inThen) {
-                assert.ok(false, "Should have failed directly");
+                return assert.ok(false, "Should have failed directly");
             } else {
-                assert.ok(true, "Failed because list is paused");
+                return assert.ok(true, "Failed because list is paused");
             }
         });
     });
@@ -137,7 +138,7 @@ contract('Whitelist', function (accounts) {
         }).then(function () {
             return meta.participantAmount.call();
         }).then(function (count) {
-            assert.equal(count.toNumber(), whitelistCount_start + 1, "Should have added 1");
+            return assert.equal(count.toNumber(), whitelistCount_start + 1, "Should have added 1");
         });
     });
 
@@ -152,12 +153,11 @@ contract('Whitelist', function (accounts) {
             assert.ok(false, "Should have failed with testrpc");
         }).catch(function () {
             if (inThen) {
-                assert.ok(false, "Should have failed directly");
+                return assert.ok(false, "Should have failed directly");
             } else {
-                assert.ok(true, "Failed because only admins can call stop method");
+                return assert.ok(true, "Failed because only admins can call stop method");
             }
-        })
-            ;
+        });
     });
 
     it("Admins can add admins", function () {
@@ -171,7 +171,7 @@ contract('Whitelist', function (accounts) {
         }).then(function () {
             return meta.isAdmin(account_two);
         }).then(function (isAdmin) {
-            assert.equal(isAdmin, true, "New account should be admin");
+            return assert.equal(isAdmin, true, "New account should be admin");
         })
     });
 
@@ -189,7 +189,7 @@ contract('Whitelist', function (accounts) {
         }).then(function () {
             return meta.isAdmin(accounts[5]);
         }).then(function (isAdmin) {
-            assert.equal(isAdmin, false, "Account should not be admin");
+            return assert.equal(isAdmin, false, "Account should not be admin");
         })
     });
 
@@ -204,12 +204,11 @@ contract('Whitelist', function (accounts) {
             assert.ok(false, "Should have failed with testrpc");
         }).catch(function () {
             if (inThen) {
-                assert.ok(false, "Should have failed directly");
+                return assert.ok(false, "Should have failed directly");
             } else {
-                assert.ok(true, "Failed because only owner can call stop method");
+                return assert.ok(true, "Failed because only owner can call stop method");
             }
-        })
-            ;
+        });
     });
 
     it("Should remove an existing account and update the count. After add this one again", function () {
@@ -233,8 +232,7 @@ contract('Whitelist', function (accounts) {
         }).then(function (count) {
             assert.equal(count.toNumber(), whitelistCount_start + 1, "Should be the same as in the beginning");
             return true;
-        })
-            ;
+        });
     });
 
     it("Should not remove self", function () {
@@ -248,9 +246,9 @@ contract('Whitelist', function (accounts) {
             assert.ok(false, "Should have failed with testrpc");
         }).catch(function (err) {
             if (inThen) {
-                assert.ok(false, "Should have failed directly");
+                return assert.ok(false, "Should have failed directly");
             } else {
-                assert.ok(true, "Failed because cannot remove self");
+                return assert.ok(true, "Failed because cannot remove self");
             }
         });
     });
@@ -266,9 +264,9 @@ contract('Whitelist', function (accounts) {
             assert.ok(false, "Should have failed");
         }).catch(function (err) {
             if (inThen) {
-                assert.ok(false, "Should have failed");
+                return assert.ok(false, "Should have failed");
             } else {
-                assert.ok(true, "Failed successfully");
+                return assert.ok(true, "Failed successfully");
             }
         });
     });
@@ -292,7 +290,7 @@ contract('Whitelist', function (accounts) {
             return web3.eth.getBalance(accounts[8]);
         }).then(function (balance) {
             // need to take in account the gascosts. But won't be over 0.5 ETH
-            assert.ok(balance.toNumber() > (account_eight_balance - web3.toWei(0.5, "ether")), "Should have returned the amount");
+            return assert.ok(balance.toNumber() > (account_eight_balance - web3.toWei(0.5, "ether")), "Should have returned the amount");
         });
     });
 
@@ -318,7 +316,7 @@ contract('Whitelist', function (accounts) {
             assert.equal(isParticipant, true, "Should be true");
             return meta.isParticipant(accounts[9])
         }).then((isParticipant) => {
-            assert.equal(isParticipant, true, "Should be true");
+            return assert.equal(isParticipant, true, "Should be true");
         })
     });
 
@@ -347,7 +345,7 @@ contract('Whitelist', function (accounts) {
                 return meta.participantAmount.call();
             }
         }).then(function (count) {
-            assert.equal(count.toNumber(), whitelistCount_start, "Should be the same");
+            return assert.equal(count.toNumber(), whitelistCount_start, "Should be the same");
         });
     });
 

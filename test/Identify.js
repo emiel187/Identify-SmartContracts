@@ -40,7 +40,7 @@ contract('Identify', function (accounts) {
                 return instance.owner.call();
             })
         }).then(function (owner) {
-            assert.equal(owner, accounts[0], "Should transfered successful");
+            return assert.equal(owner, accounts[0], "Should transfered successful");
         });
     });
 
@@ -55,7 +55,7 @@ contract('Identify', function (accounts) {
             account_two_start_balance = balance.toNumber();
             return meta.balanceOf(account_empty);
         }).then(function (balance) {
-            account_empty_start_balance = balance.toNumber();
+            return account_empty_start_balance = balance.toNumber();
         });
     });
 
@@ -80,32 +80,29 @@ contract('Identify', function (accounts) {
             return meta.transferFrom(Identify.address, account_one, 20000000000);
         }).then(function () {
             return meta.balanceOf(account_one);
-        })
-            .then(function (balance) {
-                // Should have transfered to account number 1
-                assert.equal(balance.toNumber(), account_one_start_balance + 20000000000, "Balance should be  startingbalance + 20000000000");
-                return meta.balanceOf(account_two);
-            }).then(function (balance) {
-                assert.equal(balance.toNumber(), account_two_start_balance, "Balance still should be start balance");
-                return true;
-            }).then(function (r) {
-                // transfer half to account 2
-                return meta.transferFrom(account_one, account_two, 10000000000);
-            }).then(function () {
-                return meta.balanceOf(account_one);
-            })
-            .then(function (balance) {
-                assert.equal(balance.toNumber(), account_one_start_balance + (20000000000 - 10000000000), "Balance should be 10000000000 less than before");
-                return true;
-            }).then(function (r) {
-                //transfer from account 2 to account 1
-                return meta.transfer(account_one, 10000000000, { from: account_two, gas: 3000000 });
-            }).then(function () {
-                return meta.balanceOf(account_two);
-            })
-            .then(function (balance) {
-                assert.equal(balance.toNumber(), account_two_start_balance, "Balance should be  accounts 2 start balance");
-            });
+        }).then(function (balance) {
+            // Should have transfered to account number 1
+            assert.equal(balance.toNumber(), account_one_start_balance + 20000000000, "Balance should be  startingbalance + 20000000000");
+            return meta.balanceOf(account_two);
+        }).then(function (balance) {
+            assert.equal(balance.toNumber(), account_two_start_balance, "Balance still should be start balance");
+            return true;
+        }).then(function (r) {
+            // transfer half to account 2
+            return meta.transferFrom(account_one, account_two, 10000000000);
+        }).then(function () {
+            return meta.balanceOf(account_one);
+        }).then(function (balance) {
+            assert.equal(balance.toNumber(), account_one_start_balance + (20000000000 - 10000000000), "Balance should be 10000000000 less than before");
+            return true;
+        }).then(function (r) {
+            //transfer from account 2 to account 1
+            return meta.transfer(account_one, 10000000000, { from: account_two, gas: 3000000 });
+        }).then(function () {
+            return meta.balanceOf(account_two);
+        }).then(function (balance) {
+            return assert.equal(balance.toNumber(), account_two_start_balance, "Balance should be  accounts 2 start balance");
+        });
     });
 
 
@@ -126,12 +123,11 @@ contract('Identify', function (accounts) {
             assert.ok(false, "should fail")
         }).catch(function (err) {
             if (inThen) {
-                assert.ok(false, "Should have failed because invalid address");
+                return assert.ok(false, "Should have failed because invalid address");
             } else {
-                assert.ok(true, "Failed successful");
+                return assert.ok(true, "Failed successful");
             }
-        })
-            ;
+        });
     });
 
 
@@ -147,9 +143,9 @@ contract('Identify', function (accounts) {
             assert.ok(false, "Should fail")
         }).catch(function (err) {
             if (inThen) {
-                assert.ok(false, "Should have failed because only owner of contract can invoke transferfrom");
+                return assert.ok(false, "Should have failed because only owner of contract can invoke transferfrom");
             } else {
-                assert.ok(true, "Failed successful");
+                return assert.ok(true, "Failed successful");
             }
         });
     });
@@ -168,9 +164,9 @@ contract('Identify', function (accounts) {
             assert.ok(false, "Should fail");
         }).catch(function (err) {
             if (inThen) {
-                assert.ok(false, "Should have failed because account is empty");
+                return assert.ok(false, "Should have failed because account is empty");
             } else {
-                assert.ok(true, "Failed successful");
+                return assert.ok(true, "Failed successful");
             }
         });
     });
@@ -194,10 +190,10 @@ contract('Identify', function (accounts) {
         }).catch(function (err) {
             if (inThen) {
                 assert.ok(false, "Should have failed because transfer is disabled en should not have gone in the then function");
-                meta.enableTransfer();
+                return meta.enableTransfer();
             } else {
                 assert.ok(true, "Failed successful");
-                meta.enableTransfer();
+                return meta.enableTransfer();
             }
         });
     });
@@ -211,10 +207,9 @@ contract('Identify', function (accounts) {
             return meta.burn(account_one, 10000000000);
         }).then(function () {
             return meta.totalSupply.call();
-        })
-            .then(function (totalSupply) {
-                return assert.equal(totalSupply.toNumber(), "49253323333000000", "Should have burned 10000000000 tokens");
-            });
+        }).then(function (totalSupply) {
+            return assert.equal(totalSupply.toNumber(), "49253323333000000", "Should have burned 10000000000 tokens");
+        });
     });
 
 
@@ -229,9 +224,9 @@ contract('Identify', function (accounts) {
             assert.ok(false, "Should fail")
         }).catch(function (err) {
             if (inThen) {
-                assert.ok(false, "Should have failed because owner doesn't have that many tokens");
+                return assert.ok(false, "Should have failed because owner doesn't have that many tokens");
             } else {
-                assert.ok(true, "Failed successful");
+                return assert.ok(true, "Failed successful");
             }
         });
     });
@@ -251,12 +246,11 @@ contract('Identify', function (accounts) {
             assert.ok(false, "Should fail")
         }).catch(function (err) {
             if (inThen) {
-                assert.ok(false, "Should have failed because not owner of contract");
+                return assert.ok(false, "Should have failed because not owner of contract");
             } else {
-                assert.ok(true, "Failed successful");
+                return assert.ok(true, "Failed successful");
             }
-        })
-            ;
+        });
     });
 
     it("Should not burn tokens if not owner of contract", function () {
@@ -272,9 +266,9 @@ contract('Identify', function (accounts) {
             assert.ok(false, "Should fail")
         }).catch(function (err) {
             if (inThen) {
-                assert.ok(false, "Should have failed because only owner of contract can invoke burn");
+                return assert.ok(false, "Should have failed because only owner of contract can invoke burn");
             } else {
-                assert.ok(true, "Failed successful");
+                return assert.ok(true, "Failed successful");
             }
         });
     });
@@ -292,12 +286,11 @@ contract('Identify', function (accounts) {
             assert.ok(false, "Should fail")
         }).catch(function (err) {
             if (inThen) {
-                assert.ok(false, "Should have failed because only owner of contract can invoke transfer of ownership");
+                return assert.ok(false, "Should have failed because only owner of contract can invoke transfer of ownership");
             } else {
-                assert.ok(true, "Failed successful");
+                return assert.ok(true, "Failed successful");
             }
-        })
-            ;
+        });
     });
     // test approve / allow
 
@@ -318,8 +311,7 @@ contract('Identify', function (accounts) {
             return meta.balanceOf(account_two);
         }).then(function (balance) {
             return assert.equal(balance.toNumber(), account_two_start_balance - 100, "Should substracted 100 of account_two");
-        })
-            ;
+        });
     });
 
     it("Should not spend more than approved", function () {
@@ -334,9 +326,9 @@ contract('Identify', function (accounts) {
             assert.ok(false, "Should fail")
         }).catch(function (err) {
             if (inThen) {
-                assert.ok(false, "Should have failed because cannot spend more than approved");
+                return assert.ok(false, "Should have failed because cannot spend more than approved");
             } else {
-                assert.ok(true, "Failed successful");
+                return assert.ok(true, "Failed successful");
             }
         }).then(function () {
             // transfer remaining 100
@@ -349,8 +341,7 @@ contract('Identify', function (accounts) {
             return meta.balanceOf(account_two);
         }).then(function (balance) {
             return assert.equal(balance.toNumber(), account_two_start_balance - 100, "Should substracted 100 of account_two");
-        })
-            ;
+        });
     });
 
     // test already approved to increase approval
@@ -368,12 +359,11 @@ contract('Identify', function (accounts) {
             assert.ok(false, "Should fail")
         }).catch(function (err) {
             if (inThen) {
-                assert.ok(false, "Should have failed because already an approved amount");
+                return assert.ok(false, "Should have failed because already an approved amount");
             } else {
-                assert.ok(true, "Failed successful");
+                return assert.ok(true, "Failed successful");
             }
-        })
-            ;
+        });
     });
 
     it("Should increase correctly", function () {
@@ -393,8 +383,7 @@ contract('Identify', function (accounts) {
             return meta.balanceOf(account_two);
         }).then(function (balance) {
             return assert.equal(balance.toNumber(), account_two_start_balance - 300, "Should substracted 300 of account_two");
-        })
-            ;
+        });
     });
 
     it("Should decrease correctly", function () {
@@ -421,28 +410,27 @@ contract('Identify', function (accounts) {
             return meta.allowance.call(account_two, account_one);
         }).then(function (spendAmount) {
             return assert.equal(spendAmount.toNumber(), 150, "Should be 150");
-        })
-            ;
-    });
-/*
-    it("Should fail when already approved through approveandcall method", function () {
-        var inThen = false;
-
-        return Identify.deployed().then(function (instance) {
-            meta = instance;
-            return meta.approveAndCall(account_one, 150, "extradata", { from: account_two });
-        }).then(function () {
-            inThen = true;
-            assert.ok(false, "Should fail")
-        }).catch(function (err) {
-            if (inThen) {
-                assert.ok(false, "Should have failed because already an approved amount");
-            } else {
-                assert.ok(true, "Failed successful");
-            }
         });
     });
-*/
+    /*
+        it("Should fail when already approved through approveandcall method", function () {
+            var inThen = false;
+    
+            return Identify.deployed().then(function (instance) {
+                meta = instance;
+                return meta.approveAndCall(account_one, 150, "extradata", { from: account_two });
+            }).then(function () {
+                inThen = true;
+                assert.ok(false, "Should fail")
+            }).catch(function (err) {
+                if (inThen) {
+                    assert.ok(false, "Should have failed because already an approved amount");
+                } else {
+                    assert.ok(true, "Failed successful");
+                }
+            });
+        });
+    */
     it("Should use approveandcallascontract properly", function () {
 
         return Identify.deployed().then(function (instance) {
@@ -471,8 +459,5 @@ contract('Identify', function (accounts) {
             return assert.ok(owner === account_empty);
         });
     });
-
-
-
 
 });

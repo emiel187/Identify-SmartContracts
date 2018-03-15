@@ -22,14 +22,14 @@ contract('MultiSigWallet', function (accounts) {
     });
 
     beforeEach(function () {
-        MultiSigWallet.deployed().then(function (instance) {
+        return MultiSigWallet.deployed().then(function (instance) {
             metaMultisig = instance;
             return metaMultisig.transactionCount.call();
         }).then(function (transactioncount) {
             transactioncount_start = transactioncount.toNumber();
             return web3.eth.getBalance(metaMultisig.address);
         }).then(function (balance) {
-            balance_start = balance.toNumber();
+            return balance_start = balance.toNumber();
         })
     });
 
@@ -58,9 +58,8 @@ contract('MultiSigWallet', function (accounts) {
         }).then(function () {
             return web3.eth.getBalance(metaMultisig.address);
         }).then(function (balance) {
-            assert.equal(balance.toNumber(), "1000000000000000000", "Should be 1 ETH");
-        })
-            ;
+            return assert.equal(balance.toNumber(), "1000000000000000000", "Should be 1 ETH");
+        });
     });
 
 
@@ -106,9 +105,8 @@ contract('MultiSigWallet', function (accounts) {
             return metaMultisig.required.call();
         }).then(function (required) {
             // Instantly accepts the submitted transaction because we set our required to only 1 -> so let's set it back to 2
-            assert.equal(required.toNumber(), 2, "Should be 2");
-        })
-            ;
+            return assert.equal(required.toNumber(), 2, "Should be 2");
+        });
     });
 
 
@@ -161,7 +159,7 @@ contract('MultiSigWallet', function (accounts) {
         }).then(function (balance) {
             // must be smaller or equal to the amount we sent. But higher than the amount we send + 50%. 
             // Cause could be a bit less than the original - 1000000000 of gas costs
-            assert.ok((balance <= (balance_start - 1000000000)) && (balance >= (balance_start - 1500000000)), "Should be less");
+            return assert.ok((balance <= (balance_start - 1000000000)) && (balance >= (balance_start - 1500000000)), "Should be less");
         });
     });
 
@@ -188,12 +186,11 @@ contract('MultiSigWallet', function (accounts) {
             assert.ok(false, "Should have failed, already confirmed by this owner")
         }).catch(function (err) {
             if (inThen) {
-                assert.ok(false, "should have failed directly");
+                return assert.ok(false, "should have failed directly");
             } else {
-                assert.ok(true, "Failed because already confirmed");
+                return assert.ok(true, "Failed because already confirmed");
             }
-        })
-            ;
+        });
     });
 
     it("Should fail when executing transaction that already is executed", function () {
@@ -219,9 +216,9 @@ contract('MultiSigWallet', function (accounts) {
             assert.ok(false, "Should have failed, already confirmed by this owner")
         }).catch(function (err) {
             if (inThen) {
-                assert.ok(false, "should have failed directly");
+                return assert.ok(false, "should have failed directly");
             } else {
-                assert.ok(true, "Failed because already executed");
+                return assert.ok(true, "Failed because already executed");
             }
         });
     });
@@ -248,14 +245,13 @@ contract('MultiSigWallet', function (accounts) {
         }).then(function (transaction) {
             // get transaction with that id and check if it is executed
             if (!transaction[3]) {
-                assert.ok(true, "Should be false");
+                return assert.ok(true, "Should be false");
             } else {
-                assert.ok(false, "Should be false");
+                return assert.ok(false, "Should be false");
             }
         }).catch(function () {
-            assert.ok(false, "Should not have failed, catched above.")
-        })
-            ;
+            return assert.ok(false, "Should not have failed, catched above.")
+        });
     });
 
     it("Should get owners properly", function () {
@@ -276,14 +272,13 @@ contract('MultiSigWallet', function (accounts) {
         }).then(function (transaction) {
             // get transaction with that id and check if it is executed
             if (!transaction[3]) {
-                assert.ok(true, "Should be false");
+                return assert.ok(true, "Should be false");
             } else {
-                assert.ok(false, "Should be false");
+                return assert.ok(false, "Should be false");
             }
         }).catch(function () {
-            assert.ok(false, "Should not have failed, catched above.")
-        })
-            ;
+            return assert.ok(false, "Should not have failed, catched above.")
+        });
     });
 
 
@@ -307,7 +302,7 @@ contract('MultiSigWallet', function (accounts) {
         }).then(function () {
             return metaIdentify.owner.call();
         }).then(function (owner) {
-            assert.equal(owner, account_one, "Should transfered successful");
+            return assert.equal(owner, account_one, "Should transfered successful");
         });
     });
 
@@ -358,9 +353,8 @@ contract('MultiSigWallet', function (accounts) {
             return metaMultisig.required.call();
         }).then(function (required) {
             // Instantly accepts the submitted transaction because we set our required to only 1 -> so let's set it back to 2
-            assert.equal(required.toNumber(), 2, "Should still be 2");
-        })
-            ;
+            return assert.equal(required.toNumber(), 2, "Should still be 2");
+        });
     });
 
 
@@ -390,9 +384,8 @@ contract('MultiSigWallet', function (accounts) {
             return metaMultisig.required.call();
         }).then(function (required) {
             // Instantly accepts the submitted transaction because we set our required to only 1 -> so let's set it back to 2
-            assert.equal(required.toNumber(), 2, "Should still be 2");
-        })
-            ;
+            return assert.equal(required.toNumber(), 2, "Should still be 2");
+        });
     });
 
     // replace owner -> 0xe20056e6
@@ -422,9 +415,8 @@ contract('MultiSigWallet', function (accounts) {
         }).then(function () {
             return metaMultisig.getOwners();
         }).then(function (owners) {
-            assert.ok(old_owners[0] != owners[0], "Should be replaced by the new (not) owner")
-        })
-            ;
+            return assert.ok(old_owners[0] != owners[0], "Should be replaced by the new (not) owner")
+        });
     });
 
     it("Should not replace owner after confirmations if owner already is an owner", function () {
@@ -454,9 +446,8 @@ contract('MultiSigWallet', function (accounts) {
         }).then(function (owners) {
             assert.ok(old_owners[2] === owners[2], "Should not be replaced by the new owner");
             assert.ok(old_owners[1] === owners[1], "Should not be replaced by the new owner");
-            assert.ok(old_owners[0] === owners[0], "Should not be replaced by the new owner");
-        })
-            ;
+            return assert.ok(old_owners[0] === owners[0], "Should not be replaced by the new owner");
+        });
     });
 
     it("Should fail when submitting a function when is not in the owners list", function () {
@@ -483,12 +474,11 @@ contract('MultiSigWallet', function (accounts) {
             assert.ok(false, "Should have failed here");
         }).catch(function () {
             if (inThen) {
-                assert.ok(false, "should have failed directly");
+                return assert.ok(false, "should have failed directly");
             } else {
-                assert.ok(true, "Failed because not in ownerslist");
+                return assert.ok(true, "Failed because not in ownerslist");
             }
-        })
-            ;
+        });
     });
 
     it("Should fail when confirming a function when is not in the owners list", function () {
@@ -520,12 +510,11 @@ contract('MultiSigWallet', function (accounts) {
             assert.ok(false, "Should have failed here");
         }).catch(function () {
             if (inThen) {
-                assert.ok(false, "should have failed directly");
+                return assert.ok(false, "should have failed directly");
             } else {
-                assert.ok(true, "Failed because not in ownerslist");
+                return assert.ok(true, "Failed because not in ownerslist");
             }
-        })
-            ;
+        });
     });
 
     // transfer Identify token amount -> 0x7926902e
@@ -568,7 +557,7 @@ contract('MultiSigWallet', function (accounts) {
             assert.equal(tokens.toNumber(), (multisig_Identify_start - 10000000000));
             return metaIdentify.balanceOf(account_two);
         }).then(function (balance) {
-            assert.equal(balance.toNumber(), (account_two_Identify_start + 10000000000));
+            return assert.equal(balance.toNumber(), (account_two_Identify_start + 10000000000));
         });
     });
 
@@ -593,9 +582,9 @@ contract('MultiSigWallet', function (accounts) {
             return metaMultisig.getTransactionIds(0, 14, true, true);
         }).catch(function () {
             if (inThen) {
-                assert.ok(false, "should have failed directly");
+                return assert.ok(false, "should have failed directly");
             } else {
-                assert.ok(true, "Failed because not in ownerslist");
+                return assert.ok(true, "Failed because not in ownerslist");
             }
         });
     });
@@ -629,12 +618,11 @@ contract('MultiSigWallet', function (accounts) {
             return metaMultisig.submitTransaction(metaMultisig.address, 0, "0x7065cb48000000000000000000000000invalidaddress", { from: account_one, gas: 3000000 });
         }).catch(function () {
             if (inThen) {
-                assert.ok(false, "should have failed directly");
+                return assert.ok(false, "should have failed directly");
             } else {
-                assert.ok(true, "Failed because not a valid address");
+                return assert.ok(true, "Failed because not a valid address");
             }
         });
     });
-
 
 });    
