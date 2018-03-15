@@ -3,6 +3,7 @@
 // When testing on own network instead of truffles -> unlock accounts 0, 1, 4, 6, 7 and 8
 
 var Whitelist = artifacts.require("Whitelist");
+var sha256 = require('js-sha256');
 
 contract('Whitelist', function (accounts) {
 
@@ -155,7 +156,7 @@ contract('Whitelist', function (accounts) {
             if (inThen) {
                 return assert.ok(false, "Should have failed directly");
             } else {
-                return assert.ok(true, "Failed because only admins can call stop method");
+                return assert.ok(true, "Failed because only admins can add admins");
             }
         });
     });
@@ -285,8 +286,7 @@ contract('Whitelist', function (accounts) {
         }).then(function () {
             //fallback function
             return meta.sendTransaction({ from: accounts[8], gas: 3000000, value: 1 });
-        })
-        then(function () {
+        }).then(function () {
             return web3.eth.getBalance(accounts[8]);
         }).then(function (balance) {
             // need to take in account the gascosts. But won't be over 0.5 ETH
@@ -296,7 +296,6 @@ contract('Whitelist', function (accounts) {
 
     // test add multipleAddresses
     it("Should add 3 addresses to the whitelist", function () {
-        var account_eight_balance;
         const multipleAddresses = [accounts[2], accounts[3], accounts[9]]
 
         return Whitelist.deployed().then(function (instance) {
@@ -320,32 +319,122 @@ contract('Whitelist', function (accounts) {
         })
     });
 
+    // add 5 participants
+    it("Should add 5 addresses to the whitelist", function () {
+        const multipleAddresses = [];
 
-    it("Should not register when stopped", function () {
-        var inThen;
 
         return Whitelist.deployed().then(function (instance) {
-            meta = instance;
-            return meta.stopRegister();
-        }).then(function () {
-            return meta.getTier(account_empty);
-        }).then(function (tier) {
-            if (tier.toNumber() === 0) {
-                return meta.addParticipant(account_empty);
+            for (i = 0; i < 5; i++) {
+                msgToHash = `Message to hash` + i;
+                sha256(msgToHash);
+                var after = sha256.create().update(msgToHash).hex();
+                let text = `0x${after}`;
+                multipleAddresses.push(text);
             }
+            meta = instance;
+            return meta.addFiveParticipants(multipleAddresses[0], multipleAddresses[1], multipleAddresses[2], multipleAddresses[3], multipleAddresses[4], { from: accounts[0], gas: 3000000 });
+        }).then(function () {
+            return meta.participantAmount.call();
+        }).then(function (participantAmount) {
+            return assert.equal(participantAmount.toNumber(), whitelistCount_start + 5, "Should have added 5 addresses");
+        }).then(function() {
+            return meta.isParticipant(multipleAddresses[0]);
+        }).then(function(isParticipant) {
+            assert.equal(isParticipant, true, "Should be true")
+            return meta.isParticipant(multipleAddresses[1])
+        }).then(function(isParticipant) {
+            assert.equal(isParticipant, true, "Should be true");
+            return meta.isParticipant(multipleAddresses[2])
+        }).then(function(isParticipant) {
+            assert.equal(isParticipant, true, "Should be true");            
+            return meta.isParticipant(multipleAddresses[3]);
+        }).then(function(isParticipant) {
+            assert.equal(isParticipant, true, "Should be true")
+            return meta.isParticipant(multipleAddresses[4])
+        }).then(function(isParticipant) {
+            return assert.equal(isParticipant, true, "Should be true");
+        })
+    });
+
+    // add 10 participants
+    it("Should add 10 addresses to the whitelist", function () {
+        const multipleAddresses = [];
+
+
+        return Whitelist.deployed().then(function (instance) {
+            for (i = 0; i < 10; i++) {
+                msgToHash = `Message to hashh` + i;
+                sha256(msgToHash);
+                var after = sha256.create().update(msgToHash).hex();
+                let text = `0x${after}`;
+                multipleAddresses.push(text);
+            }
+            meta = instance;
+            return meta.addTenParticipants(multipleAddresses[0], multipleAddresses[1], multipleAddresses[2], multipleAddresses[3], multipleAddresses[4],multipleAddresses[5], multipleAddresses[6], multipleAddresses[7], multipleAddresses[8], multipleAddresses[9], { from: accounts[0], gas: 3000000 });
+        }).then(function () {
+            return meta.participantAmount.call();
+        }).then(function (participantAmount) {
+            return assert.equal(participantAmount.toNumber(), whitelistCount_start + 10, "Should have added 10 addresses");
+        }).then(function() {
+            return meta.isParticipant(multipleAddresses[0]);
+        }).then(function(isParticipant) {
+            assert.equal(isParticipant, true, "Should be true")
+            return meta.isParticipant(multipleAddresses[1])
+        }).then(function(isParticipant) {
+            assert.equal(isParticipant, true, "Should be true");
+            return meta.isParticipant(multipleAddresses[2])
+        }).then(function(isParticipant) {
+            assert.equal(isParticipant, true, "Should be true");            
+            return meta.isParticipant(multipleAddresses[3]);
+        }).then(function(isParticipant) {
+            assert.equal(isParticipant, true, "Should be true")
+            return meta.isParticipant(multipleAddresses[4])
+        }).then(function(isParticipant) {
+            assert.equal(isParticipant, true, "Should be true");
+            return meta.isParticipant(multipleAddresses[5])            
+        }).then(function(isParticipant) {
+            assert.equal(isParticipant, true, "Should be true")
+            return meta.isParticipant(multipleAddresses[6])
+        }).then(function(isParticipant) {
+            assert.equal(isParticipant, true, "Should be true");
+            return meta.isParticipant(multipleAddresses[7])
+        }).then(function(isParticipant) {
+            assert.equal(isParticipant, true, "Should be true");            
+            return meta.isParticipant(multipleAddresses[8]);
+        }).then(function(isParticipant) {
+            assert.equal(isParticipant, true, "Should be true")
+            return meta.isParticipant(multipleAddresses[9])
+        }).then(function(isParticipant) {
+            return assert.equal(isParticipant, true, "Should be true");            
+        })
+    });
+
+
+      // add 5 participants
+      it("Should fail when not inputting enough parameters", function () {
+        const multipleAddresses = [];
+        var inThen = false;
+
+        return Whitelist.deployed().then(function (instance) {
+            for (i = 0; i < 4; i++) {
+                msgToHash = `Message to haash` + i;
+                sha256(msgToHash);
+                var after = sha256.create().update(msgToHash).hex();
+                let text = `0x${after}`;
+                multipleAddresses.push(text);
+            }
+            meta = instance;
+            return meta.addFiveParticipants(multipleAddresses[0], multipleAddresses[1], multipleAddresses[2], multipleAddresses[3], { from: accounts[0], gas: 3000000 });
         }).then(function () {
             inThen = true;
-            assert.ok(false, "Should have failed with testrpc");
+            assert.ok(false, "Should have failed");
         }).catch(function (err) {
             if (inThen) {
-                assert.ok(false, "Should have failed directly");
-                return meta.participantAmount.call();
+                return assert.ok(false, "Should have failed");
             } else {
-                assert.ok(true, "Failed because stop method is invoked");
-                return meta.participantAmount.call();
+                return assert.ok(true, "Failed successfully");
             }
-        }).then(function (count) {
-            return assert.equal(count.toNumber(), whitelistCount_start, "Should be the same");
         });
     });
 

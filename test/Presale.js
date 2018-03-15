@@ -507,9 +507,14 @@ contract('Presale', function (accounts) {
             return metaIdentify.owner.call();
         }).then(function (owner) {
             assert.equal(owner, metaPresaleV5.address, "Should transfered successful");
-            return metaPresaleV5.sendTransaction({ from: account_one, gas: 3000000, value: web3.toWei('2', 'ether') });
+            return metaWhitelist.addParticipant(account_two, { from: account_one, gas: 3000000 });
+        }).then(function(){ 
+            return metaWhitelist.isParticipant(account_two);
+        }).then(function(isParticipant){
+            assert.equal(isParticipant,true,"Should be a participant");
+            return metaPresaleV5.sendTransaction({ from: account_two, gas: 3000000, value: web3.toWei('2', 'ether') });
         }).then(function(){
-            return metaPresaleV5.sendTransaction({ from: account_one, gas: 3000000, value: web3.toWei('1', 'ether') });            
+            return metaPresaleV5.sendTransaction({ from: account_two, gas: 3000000, value: web3.toWei('1', 'ether') });
         });
     });
 });

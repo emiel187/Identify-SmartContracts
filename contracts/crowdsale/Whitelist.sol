@@ -149,7 +149,7 @@ contract Whitelist is Ownable {
 
 
     /**
-     * @notice rused to save gas
+     * @notice used to save gas
      */ 
     function addMultipleParticipants(address[] _participants ) public onlyAdmin returns (bool) {
         
@@ -157,6 +157,36 @@ contract Whitelist is Ownable {
             require(addParticipant(_participants[i]));
         }
 
+        return true;
+    }
+
+    /**
+     * @notice used to save gas. Backup function.
+     */ 
+    function addFiveParticipants(address participant1, address participant2, address participant3, address participant4, address participant5) public onlyAdmin returns (bool) {
+        require(addParticipant(participant1));
+        require(addParticipant(participant2));
+        require(addParticipant(participant3));
+        require(addParticipant(participant4));
+        require(addParticipant(participant5));
+        return true;
+    }
+
+    /**
+     * @notice used to save gas. Backup function.
+     */ 
+    function addTenParticipants(address participant1, address participant2, address participant3, address participant4, address participant5,
+     address participant6, address participant7, address participant8, address participant9, address participant10) public onlyAdmin returns (bool) {
+        require(addParticipant(participant1));
+        require(addParticipant(participant2));
+        require(addParticipant(participant3));
+        require(addParticipant(participant4));
+        require(addParticipant(participant5));
+        require(addParticipant(participant6));
+        require(addParticipant(participant7));
+        require(addParticipant(participant8));
+        require(addParticipant(participant9));
+        require(addParticipant(participant10));
         return true;
     }
 
