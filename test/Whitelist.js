@@ -298,7 +298,7 @@ contract('Whitelist', function (accounts) {
         }).then(function (participantAmount) {
             assert.equal(participantAmount.toNumber(), whitelistCount_start + 3, "Should have added 3 addresses");
             return true;
-        }).then(() => {
+        }).then(function() {
             return meta.isParticipant(accounts[1]);
         }).then((isParticipant) => {
             assert.equal(isParticipant, true, "Should be true")

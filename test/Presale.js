@@ -201,7 +201,7 @@ contract('Presale', function (accounts) {
             return metaIdentify.owner.call();
         }).then(function (owner) {
             return assert.equal(owner, metaPresaleV2.address, "Should be presale");
-        }).then(() => {
+        }).then(function() {
             return metaWhitelist.isParticipant(accounts[9]);
         }).then(function (isParticipant) {
             assert.equal(isParticipant, true, "Account should be added as a participant");
@@ -303,7 +303,7 @@ contract('Presale', function (accounts) {
             return metaIdentify.owner.call();
         }).then(function (owner) {
             return assert.equal(owner, metaPresaleV3.address, "Should transfered successful");
-        }).then(() => {
+        }).then(function() {
             return metaWhitelist.isParticipant(accounts[9])
         }).then(function (isParticipant) {
             assert.equal(isParticipant, true, "First account should be a participant");
