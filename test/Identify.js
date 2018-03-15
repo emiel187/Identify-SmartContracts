@@ -424,7 +424,7 @@ contract('Identify', function (accounts) {
         })
             ;
     });
-
+/*
     it("Should fail when already approved through approveandcall method", function () {
         var inThen = false;
 
@@ -442,7 +442,7 @@ contract('Identify', function (accounts) {
             }
         });
     });
-
+*/
     it("Should use approveandcallascontract properly", function () {
 
         return Identify.deployed().then(function (instance) {
