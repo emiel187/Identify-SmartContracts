@@ -1,6 +1,4 @@
-// Tests are tested with TestRPC.
-// @author Kevin Leyssens - <kevin.leyssens@theledger.be>
-// When testing on own network instead of truffles -> unlock accounts 0,1 and 4
+// Tests are written for testrpc / ganache-cli
 
 var Presale = artifacts.require("Presale");
 var Identify = artifacts.require("Identify");

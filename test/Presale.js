@@ -1,5 +1,5 @@
-// Tests are tested with TestRPC.
-// @author Kevin Leyssens - <kevin.leyssens@theledger.be>
+// Tests are written for testrpc / ganache-cli
+
 var Identify = artifacts.require("Identify");
 var MultiSigWallet = artifacts.require("MultiSigWallet");
 var Presale = artifacts.require("Presale");

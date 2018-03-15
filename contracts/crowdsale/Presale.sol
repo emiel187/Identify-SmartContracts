@@ -6,7 +6,6 @@ import '../token/Identify.sol';
 import '../token/ERC20.sol';
 import '../crowdsale/Whitelist.sol';
 
-
 /**
  * @title Presale
  * @dev Presale is a base contract for managing a token presale.

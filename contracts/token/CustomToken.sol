@@ -7,8 +7,7 @@ import "../ownership/Ownable.sol";
 /**
  * @title Custom ERC20 token
  *
- * @dev Implementation of the basic standard token.
- * @dev https://github.com/ethereum/EIPs/issues/20
+ * @dev Implementation and upgraded version of the basic standard token.
  */
 contract CustomToken is ERC20, BasicToken, Ownable {
 

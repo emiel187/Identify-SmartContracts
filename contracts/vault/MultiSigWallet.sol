@@ -2,9 +2,10 @@ pragma solidity ^0.4.18;
 
 import "../token/Identify.sol";
 
-/// @title Multisignature wallet - Allows multiple parties to agree on transactions before execution.
-/// @author Stefan George - <stefan.george@consensys.net>
-/// Based on MultiSigWallet.sol from https://github.com/Giveth/multisig
+/**
+ * @title Multisignature wallet - Allows multiple parties to agree on transactions before execution.
+ * Based on MultiSigWallet.sol from https://github.com/Giveth/multisig
+ */
 contract MultiSigWallet {
 
     uint constant public MAX_OWNER_COUNT = 50;

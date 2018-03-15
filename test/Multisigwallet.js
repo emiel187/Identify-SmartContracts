@@ -1,3 +1,4 @@
+// Tests are written for testrpc / ganache-cli
 
 var MultiSigWallet = artifacts.require("MultiSigWallet");
 var Presale = artifacts.require("Presale");

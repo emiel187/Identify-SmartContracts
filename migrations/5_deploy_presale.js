@@ -1,4 +1,3 @@
-
 var Multisig = artifacts.require('./vault/MultiSigWallet.sol');
 var Presale = artifacts.require('./crowdsale/Presale.sol');
 var Identify = artifacts.require('./token/Identify.sol');

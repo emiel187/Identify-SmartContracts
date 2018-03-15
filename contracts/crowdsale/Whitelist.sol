@@ -4,7 +4,12 @@ import '../math/SafeMath.sol';
 import '../token/ERC20.sol';
 import '../ownership/Ownable.sol';
 
-
+/**
+ * @title Whitelist contract
+ * @dev Participants for the presale and public sale must be 
+ * registered in the whitelist. Admins can add and remove 
+ * participants and other admins.
+ */
 contract Whitelist is Ownable {
     using SafeMath for uint256;
 

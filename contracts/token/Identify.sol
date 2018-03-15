@@ -1,9 +1,7 @@
 pragma solidity ^0.4.18;
 
-
 import "./CustomToken.sol";
  
-
 /**
  * @title Identify token
  * @dev ERC20 compliant token, where all tokens are pre-assigned to the token contract.

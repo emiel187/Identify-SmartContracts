@@ -1,6 +1,4 @@
-// Tests are tested with TestRPC.
-// @author Kevin Leyssens - <kevin.leyssens@theledger.be>; Jeroen De Prest - <jeroen.deprest@theledger.be> 
-// When testing on own network instead of truffles -> unlock accounts 0, 1, 4, 6, 7 and 8
+// Tests are written for testrpc / ganache-cli
 
 var Whitelist = artifacts.require("Whitelist");
 var sha256 = require('js-sha256');
