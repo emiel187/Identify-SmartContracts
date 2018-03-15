@@ -10,9 +10,7 @@ contract('Whitelist', function (accounts) {
     var account_one = accounts[0];
     var account_two = accounts[1];
     var account_four = accounts[4];
-
     var whitelistCount_start;
-
     var meta;
 
     beforeEach(function () {
@@ -35,7 +33,6 @@ contract('Whitelist', function (accounts) {
                     }).catch(done);
             }).catch(done);
     });
-
 
     it("Should add other successfully to list", function () {
         return Whitelist.deployed().then(function (instance) {
@@ -84,7 +81,6 @@ contract('Whitelist', function (accounts) {
         });
     });
 
-    // test only once added
     it("Should added only once", function () {
         var inThen;
         return Whitelist.deployed().then(function (instance) {
@@ -108,7 +104,6 @@ contract('Whitelist', function (accounts) {
         });
     });
 
-    // test not added when paused
     it("Should not add when paused", function () {
         var inThen;
 
@@ -207,7 +202,7 @@ contract('Whitelist', function (accounts) {
             if (inThen) {
                 return assert.ok(false, "Should have failed directly");
             } else {
-                return assert.ok(true, "Failed because only owner can call stop method");
+                return assert.ok(true, "Failed");
             }
         });
     });
@@ -272,8 +267,6 @@ contract('Whitelist', function (accounts) {
         });
     });
 
-
-    // test fallback function
     it("Should transfer ether back", function () {
         var account_eight_balance;
 
@@ -294,7 +287,6 @@ contract('Whitelist', function (accounts) {
         });
     });
 
-    // test add multipleAddresses
     it("Should add 3 addresses to the whitelist", function () {
         const multipleAddresses = [accounts[2], accounts[3], accounts[9]]
 
@@ -306,7 +298,7 @@ contract('Whitelist', function (accounts) {
         }).then(function (participantAmount) {
             assert.equal(participantAmount.toNumber(), whitelistCount_start + 3, "Should have added 3 addresses");
             return true;
-        }).then(() => {
+        }).then(function() {
             return meta.isParticipant(accounts[1]);
         }).then((isParticipant) => {
             assert.equal(isParticipant, true, "Should be true")
@@ -319,10 +311,8 @@ contract('Whitelist', function (accounts) {
         })
     });
 
-    // add 5 participants
     it("Should add 5 addresses to the whitelist", function () {
         const multipleAddresses = [];
-
 
         return Whitelist.deployed().then(function (instance) {
             for (i = 0; i < 5; i++) {
@@ -338,29 +328,27 @@ contract('Whitelist', function (accounts) {
             return meta.participantAmount.call();
         }).then(function (participantAmount) {
             return assert.equal(participantAmount.toNumber(), whitelistCount_start + 5, "Should have added 5 addresses");
-        }).then(function() {
+        }).then(function () {
             return meta.isParticipant(multipleAddresses[0]);
-        }).then(function(isParticipant) {
+        }).then(function (isParticipant) {
             assert.equal(isParticipant, true, "Should be true")
             return meta.isParticipant(multipleAddresses[1])
-        }).then(function(isParticipant) {
+        }).then(function (isParticipant) {
             assert.equal(isParticipant, true, "Should be true");
             return meta.isParticipant(multipleAddresses[2])
-        }).then(function(isParticipant) {
-            assert.equal(isParticipant, true, "Should be true");            
+        }).then(function (isParticipant) {
+            assert.equal(isParticipant, true, "Should be true");
             return meta.isParticipant(multipleAddresses[3]);
-        }).then(function(isParticipant) {
+        }).then(function (isParticipant) {
             assert.equal(isParticipant, true, "Should be true")
             return meta.isParticipant(multipleAddresses[4])
-        }).then(function(isParticipant) {
+        }).then(function (isParticipant) {
             return assert.equal(isParticipant, true, "Should be true");
         })
     });
 
-    // add 10 participants
     it("Should add 10 addresses to the whitelist", function () {
         const multipleAddresses = [];
-
 
         return Whitelist.deployed().then(function (instance) {
             for (i = 0; i < 10; i++) {
@@ -371,48 +359,46 @@ contract('Whitelist', function (accounts) {
                 multipleAddresses.push(text);
             }
             meta = instance;
-            return meta.addTenParticipants(multipleAddresses[0], multipleAddresses[1], multipleAddresses[2], multipleAddresses[3], multipleAddresses[4],multipleAddresses[5], multipleAddresses[6], multipleAddresses[7], multipleAddresses[8], multipleAddresses[9], { from: accounts[0], gas: 3000000 });
+            return meta.addTenParticipants(multipleAddresses[0], multipleAddresses[1], multipleAddresses[2], multipleAddresses[3], multipleAddresses[4], multipleAddresses[5], multipleAddresses[6], multipleAddresses[7], multipleAddresses[8], multipleAddresses[9], { from: accounts[0], gas: 3000000 });
         }).then(function () {
             return meta.participantAmount.call();
         }).then(function (participantAmount) {
             return assert.equal(participantAmount.toNumber(), whitelistCount_start + 10, "Should have added 10 addresses");
-        }).then(function() {
+        }).then(function () {
             return meta.isParticipant(multipleAddresses[0]);
-        }).then(function(isParticipant) {
+        }).then(function (isParticipant) {
             assert.equal(isParticipant, true, "Should be true")
             return meta.isParticipant(multipleAddresses[1])
-        }).then(function(isParticipant) {
+        }).then(function (isParticipant) {
             assert.equal(isParticipant, true, "Should be true");
             return meta.isParticipant(multipleAddresses[2])
-        }).then(function(isParticipant) {
-            assert.equal(isParticipant, true, "Should be true");            
+        }).then(function (isParticipant) {
+            assert.equal(isParticipant, true, "Should be true");
             return meta.isParticipant(multipleAddresses[3]);
-        }).then(function(isParticipant) {
+        }).then(function (isParticipant) {
             assert.equal(isParticipant, true, "Should be true")
             return meta.isParticipant(multipleAddresses[4])
-        }).then(function(isParticipant) {
+        }).then(function (isParticipant) {
             assert.equal(isParticipant, true, "Should be true");
-            return meta.isParticipant(multipleAddresses[5])            
-        }).then(function(isParticipant) {
+            return meta.isParticipant(multipleAddresses[5])
+        }).then(function (isParticipant) {
             assert.equal(isParticipant, true, "Should be true")
             return meta.isParticipant(multipleAddresses[6])
-        }).then(function(isParticipant) {
+        }).then(function (isParticipant) {
             assert.equal(isParticipant, true, "Should be true");
             return meta.isParticipant(multipleAddresses[7])
-        }).then(function(isParticipant) {
-            assert.equal(isParticipant, true, "Should be true");            
+        }).then(function (isParticipant) {
+            assert.equal(isParticipant, true, "Should be true");
             return meta.isParticipant(multipleAddresses[8]);
-        }).then(function(isParticipant) {
+        }).then(function (isParticipant) {
             assert.equal(isParticipant, true, "Should be true")
             return meta.isParticipant(multipleAddresses[9])
-        }).then(function(isParticipant) {
-            return assert.equal(isParticipant, true, "Should be true");            
+        }).then(function (isParticipant) {
+            return assert.equal(isParticipant, true, "Should be true");
         })
     });
 
-
-      // add 5 participants
-      it("Should fail when not inputting enough parameters", function () {
+    it("Should fail when not inputting enough parameters", function () {
         const multipleAddresses = [];
         var inThen = false;
 

@@ -17,15 +17,12 @@ contract('Presale', function (accounts) {
     var account_two = accounts[1];
     var account_empty = accounts[2];
 
-
     before(async function () {
         metaMultiSig = await MultiSigWallet.deployed();
         metaIdentify = await Identify.deployed();
         metaWhitelist = await Whitelist.deployed();
         metaPresale = await Presale.deployed();
     });
-
-
 
     it('Should be able to use the constructor', function (done) {
         var starttime = Math.round((Date.now() / 1000))
@@ -41,9 +38,6 @@ contract('Presale', function (accounts) {
             }).catch(done);
     });
 
-
-
-
     it('Owner of token should be presale after deployment', function () {
 
         return Identify.deployed().then(function (instance) {
@@ -54,7 +48,6 @@ contract('Presale', function (accounts) {
         });
     });
 
-
     it('Should have 0 ETH in the wallet', function () {
 
         return MultiSigWallet.deployed().then(function (instance) {
@@ -64,7 +57,6 @@ contract('Presale', function (accounts) {
             return assert.equal(balance.toNumber(), 0, "Should have 0 ETH in the wallet");
         });
     });
-
 
     it('Should not be able to buy correct amount of tokens if not in whitesale', function () {
         var inThen = false;
@@ -167,7 +159,6 @@ contract('Presale', function (accounts) {
         });
     });
 
-    // test transferownershiptoken as owner and not as multisig
     it('Should not transferownershiptoken when invoking as owner', function () {
         var inThen;
 
@@ -183,7 +174,6 @@ contract('Presale', function (accounts) {
         });
     });
 
-    // test transferownershiptoken as multisig
     it('Should transferownershiptoken when invoking as multisigwallet', function () {
 
         var new_owner = metaPresaleV2.address.substring(2, (metaPresaleV2.address.length));
@@ -206,13 +196,12 @@ contract('Presale', function (accounts) {
         });
     });
 
-    // test maximum cap op wei
     it('Should buy tokens to setup for further tests', function () {
         return metaWhitelist.addParticipant(accounts[9]).then(function () {
             return metaIdentify.owner.call();
         }).then(function (owner) {
             return assert.equal(owner, metaPresaleV2.address, "Should be presale");
-        }).then(() => {
+        }).then(function() {
             return metaWhitelist.isParticipant(accounts[9]);
         }).then(function (isParticipant) {
             assert.equal(isParticipant, true, "Account should be added as a participant");
@@ -224,7 +213,6 @@ contract('Presale', function (accounts) {
         })
     });
 
-    // test minimum wei from sender
     it('Should not buy tokens when not enough wei', function () {
         var inThen = false;
 
@@ -240,7 +228,6 @@ contract('Presale', function (accounts) {
         });
     });
 
-    // test maximum wei from sender
     it('Should not buy tokens when to much wei', function () {
         var inThen = false;
 
@@ -256,7 +243,6 @@ contract('Presale', function (accounts) {
         });
     });
 
-    // test minimum wei from sender
     it('Should not buy tokens over eth cap', function () {
         var inThen = false;
 
@@ -272,7 +258,6 @@ contract('Presale', function (accounts) {
         });
     });
 
-    // test minimum wei from sender
     it('Should buy tokens to the ethercap', function () {
         return metaWhitelist.isParticipant(account_one).then(function (isParticipant) {
             assert.equal(isParticipant, true, "First account should be a participant");
@@ -318,7 +303,7 @@ contract('Presale', function (accounts) {
             return metaIdentify.owner.call();
         }).then(function (owner) {
             return assert.equal(owner, metaPresaleV3.address, "Should transfered successful");
-        }).then(() => {
+        }).then(function() {
             return metaWhitelist.isParticipant(accounts[9])
         }).then(function (isParticipant) {
             assert.equal(isParticipant, true, "First account should be a participant");
@@ -336,8 +321,6 @@ contract('Presale', function (accounts) {
         });
     });
 
-
-    // test transferownership as owner and not as multisig
     it('Should not transfer ownership as owner', function () {
         var inThen = false;
 
@@ -358,9 +341,6 @@ contract('Presale', function (accounts) {
             }
         });
     });
-
-
-    // test transferownership as multisig
 
     it('Should transferownership when invoking as multisigwallet', function () {
 
@@ -384,7 +364,6 @@ contract('Presale', function (accounts) {
         });
     });
 
-    // finalize can only be called when it has ended
     it('Should not finalize presale when not ended', function () {
         // finalize
         var function_data = "0x4bb278f3";
@@ -409,11 +388,9 @@ contract('Presale', function (accounts) {
             return assert.equal(finalized, false, "Should not be finalized");
         })
     });
-    // test finalize can be called by multisig only
+
     it('Should not finalize presale when not multisig', function () {
         var inThen = false;
-
-        // finalize
         var function_data = "0x4bb278f3";
 
         return metaPresaleV2.hasEnded.call().then(function (ended) {
@@ -434,16 +411,10 @@ contract('Presale', function (accounts) {
         });
     });
 
-    // test finalization when succesfull and owner is multisig
     it('Should finalize presale when all requirements are met as multisigwallet + changed owner of token', function () {
-
-        // transferownership token
-
         var new_owner = metaPresaleV2.address.substring(2, (metaPresaleV2.address.length));
         var function_data = "0x9ae6892b";
         var data = function_data + "000000000000000000000000" + new_owner;
-
-        // finalize
         var function_finalize = "0x4bb278f3";
 
         return metaPresaleV2.hasEnded.call().then(function (ended) {
@@ -481,17 +452,16 @@ contract('Presale', function (accounts) {
         })
     });
 
-    // test when the cap is almost reached but minimum is to much to fill in gap
     it('Should drop minimumETH check when gap to cap is less than minimumETH', function () {
         var metaPresaleV5;
         var starttime = Math.round((Date.now() / 1000))
-        
-        return Presale.new(starttime, metaMultiSig.address, metaIdentify.address, metaWhitelist.address, 
+
+        return Presale.new(starttime, metaMultiSig.address, metaIdentify.address, metaWhitelist.address,
             3, // capETH
             15750000, //capTokens
             2, // minimumETH
             10 // maximumETH
-        ).then(function(instance) {
+        ).then(function (instance) {
             metaPresaleV5 = instance;
             var new_owner = metaPresaleV5.address.substring(2, (metaPresaleV5.address.length));
             var function_data = "0xf2fde38b";
@@ -508,20 +478,20 @@ contract('Presale', function (accounts) {
         }).then(function (owner) {
             assert.equal(owner, metaPresaleV5.address, "Should transfered successful");
             return metaWhitelist.addParticipant(account_two, { from: account_one, gas: 3000000 });
-        }).then(function(){ 
+        }).then(function () {
             return metaWhitelist.isParticipant(account_two);
-        }).then(function(isParticipant){
-            assert.equal(isParticipant,true,"Should be a participant");
+        }).then(function (isParticipant) {
+            assert.equal(isParticipant, true, "Should be a participant");
             return metaPresaleV5.sendTransaction({ from: account_two, gas: 3000000, value: web3.toWei('2', 'ether') });
-        }).then(function(){
+        }).then(function () {
             return metaPresaleV5.hasEnded.call()
-        }).then(function(ended){
-            assert.equal(ended,false, "Should not yet be ended");
+        }).then(function (ended) {
+            assert.equal(ended, false, "Should not yet be ended");
             return metaPresaleV5.sendTransaction({ from: account_two, gas: 3000000, value: web3.toWei('1', 'ether') });
-        }).then(function(){
-            return metaPresaleV5.hasEnded.call()            
-        }).then(function(ended){
-            return assert.equal(ended,true, "Should be ended");
+        }).then(function () {
+            return metaPresaleV5.hasEnded.call()
+        }).then(function (ended) {
+            return assert.equal(ended, true, "Should be ended");
         });
     });
 });

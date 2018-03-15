@@ -35,9 +35,9 @@ contract('MultiSigWallet', function (accounts) {
 
     it('Should be able to use the constructor', function (done) {
         MultiSigWallet.new([
-            '0xa0a4a612fba850df41183cd376e20637d357a8bd', // accounts[0]
-            '0xff95174a8978f7aff48537f4741135f523079d0b', // accounts[1]
-            '0xbb848227f23c08fa38da659d8041112ea5a2b7de' // accounts[2]
+            '0xa0a4a612fba850df41183cd376e20637d357a8bd',
+            '0xff95174a8978f7aff48537f4741135f523079d0b',
+            '0xbb848227f23c08fa38da659d8041112ea5a2b7de'
         ], 2,
             Identify.address
         ).then(
@@ -109,9 +109,6 @@ contract('MultiSigWallet', function (accounts) {
         });
     });
 
-
-    // submit transaction + get confirmation count +   revoke confirmation +   confirm transaction
-
     it("Submit transaction + get confirmation count + isconfirmed + revoke confirmation + confirm 2 x transaction + execute transaction", function () {
         var beginTransaction;
         var firstTransaction_count;
@@ -163,8 +160,6 @@ contract('MultiSigWallet', function (accounts) {
         });
     });
 
-    // fail execute transaction cause already executed
-
     it("Should fail when confirm transaction that already is confirmed by this owner", function () {
         var beginTransaction;
         var firstTransaction_count;
@@ -186,7 +181,7 @@ contract('MultiSigWallet', function (accounts) {
             assert.ok(false, "Should have failed, already confirmed by this owner")
         }).catch(function (err) {
             if (inThen) {
-                return assert.ok(false, "should have failed directly");
+                return assert.ok(false, "Should have failed directly");
             } else {
                 return assert.ok(true, "Failed because already confirmed");
             }
@@ -216,14 +211,12 @@ contract('MultiSigWallet', function (accounts) {
             assert.ok(false, "Should have failed, already confirmed by this owner")
         }).catch(function (err) {
             if (inThen) {
-                return assert.ok(false, "should have failed directly");
+                return assert.ok(false, "Should have failed directly");
             } else {
                 return assert.ok(true, "Failed because already executed");
             }
         });
     });
-
-    // execute Transaction by example when there is first 2 required and you change it to 1, transactions who have 1 can be triggered by this function
 
     it("Should fail when executing transaction that not has enough confirmations", function () {
         var beginTransaction;
@@ -245,7 +238,7 @@ contract('MultiSigWallet', function (accounts) {
         }).then(function (transaction) {
             // get transaction with that id and check if it is executed
             if (!transaction[3]) {
-                return assert.ok(true, "Should be false");
+                return assert.ok(true, "Should be true");
             } else {
                 return assert.ok(false, "Should be false");
             }
@@ -255,7 +248,6 @@ contract('MultiSigWallet', function (accounts) {
     });
 
     it("Should get owners properly", function () {
-
 
         return MultiSigWallet.deployed().then(function (instance) {
             metaMultisig = instance;
@@ -281,9 +273,6 @@ contract('MultiSigWallet', function (accounts) {
         });
     });
 
-
-
-    // transfer ownership of token
     it("Should transfer ownership of token through presale to account_one", function () {
 
         var new_owner = account_one.substring(2, (account_one.length));
@@ -306,8 +295,6 @@ contract('MultiSigWallet', function (accounts) {
         });
     });
 
-
-    // get Identify token amount
     it("Should display Identify tokens properly", function () {
         var Identify_start;
 
@@ -324,7 +311,6 @@ contract('MultiSigWallet', function (accounts) {
             return assert.equal(tokens.toNumber(), Identify_start + 10000000000);
         });
     });
-
 
     it("Should add owner after confirmations+ required stays at 2", function () {
         var owners_start;
@@ -357,7 +343,6 @@ contract('MultiSigWallet', function (accounts) {
         });
     });
 
-
     it("Should remove owner after confirmations + required stays at 2", function () {
         var owners_start;
         var transaction_id;
@@ -387,8 +372,6 @@ contract('MultiSigWallet', function (accounts) {
             return assert.equal(required.toNumber(), 2, "Should still be 2");
         });
     });
-
-    // replace owner -> 0xe20056e6
 
     it("Should replace owner after confirmations + required stays at 2", function () {
         var owners_start;
@@ -474,7 +457,7 @@ contract('MultiSigWallet', function (accounts) {
             assert.ok(false, "Should have failed here");
         }).catch(function () {
             if (inThen) {
-                return assert.ok(false, "should have failed directly");
+                return assert.ok(false, "Should have failed directly");
             } else {
                 return assert.ok(true, "Failed because not in ownerslist");
             }
@@ -510,7 +493,7 @@ contract('MultiSigWallet', function (accounts) {
             assert.ok(false, "Should have failed here");
         }).catch(function () {
             if (inThen) {
-                return assert.ok(false, "should have failed directly");
+                return assert.ok(false, "Should have failed directly");
             } else {
                 return assert.ok(true, "Failed because not in ownerslist");
             }
@@ -561,8 +544,6 @@ contract('MultiSigWallet', function (accounts) {
         });
     });
 
-
-    // test getTransactionIds
     it("Should return getTransactionIds properly", function () {
 
         return MultiSigWallet.deployed().then(function (instance) {
@@ -573,7 +554,6 @@ contract('MultiSigWallet', function (accounts) {
         });
     });
 
-    // test getTransactionIds
     it("Should fail when more than 13 transactions at getTransactionIds", function () {
         var inThen;
 
@@ -589,8 +569,6 @@ contract('MultiSigWallet', function (accounts) {
         });
     });
 
-
-    // test getTransactionCount
     it("Should return 13 at getTransactionCount", function () {
         return MultiSigWallet.deployed().then(function (instance) {
             metaMultisig = instance;
@@ -599,7 +577,7 @@ contract('MultiSigWallet', function (accounts) {
             return assert.equal(transactioncount.toNumber(), 14, "Should have 14 transactions as return value");
         });
     });
-    // test getTransactionCount
+
     it("Should have 8 executed transactions", function () {
         return MultiSigWallet.deployed().then(function (instance) {
             metaMultisig = instance;
@@ -609,10 +587,9 @@ contract('MultiSigWallet', function (accounts) {
         });
     });
 
-    // test notNull modifier
     it("Should fail when owners address is invalid", function () {
         var inThen;
-
+        
         return MultiSigWallet.deployed().then(function (instance) {
             metaMultisig = instance;
             return metaMultisig.submitTransaction(metaMultisig.address, 0, "0x7065cb48000000000000000000000000invalidaddress", { from: account_one, gas: 3000000 });
@@ -624,5 +601,4 @@ contract('MultiSigWallet', function (accounts) {
             }
         });
     });
-
 });    
