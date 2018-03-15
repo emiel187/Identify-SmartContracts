@@ -300,13 +300,13 @@ contract('Whitelist', function (accounts) {
             return true;
         }).then(function() {
             return meta.isParticipant(accounts[1]);
-        }).then((isParticipant) => {
+        }).then(function(isParticipant) {
             assert.equal(isParticipant, true, "Should be true")
             return meta.isParticipant(accounts[3])
-        }).then((isParticipant) => {
+        }).then(function(isParticipant) {
             assert.equal(isParticipant, true, "Should be true");
             return meta.isParticipant(accounts[9])
-        }).then((isParticipant) => {
+        }).then(function(isParticipant) {
             return assert.equal(isParticipant, true, "Should be true");
         })
     });

@@ -500,8 +500,6 @@ contract('MultiSigWallet', function (accounts) {
         });
     });
 
-    // transfer Identify token amount -> 0x7926902e
-
     it("Should transfer Identify tokens to an account after confirmation", function () {
         var transaction_id;
         var multisig_Identify_start;
@@ -589,7 +587,7 @@ contract('MultiSigWallet', function (accounts) {
 
     it("Should fail when owners address is invalid", function () {
         var inThen;
-        
+
         return MultiSigWallet.deployed().then(function (instance) {
             metaMultisig = instance;
             return metaMultisig.submitTransaction(metaMultisig.address, 0, "0x7065cb48000000000000000000000000invalidaddress", { from: account_one, gas: 3000000 });
