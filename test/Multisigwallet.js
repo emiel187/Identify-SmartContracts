@@ -19,10 +19,6 @@ contract('MultiSigWallet', function (accounts) {
     before(async function () {
         metaPresale = await Presale.deployed();
         metaIdentify = await Identify.deployed();
-        // make accounts[0] owner of presale
-        return Presale.deployed().then(function (instance) {
-            return instance.transferOwnershipToken(account_one);
-        });
     });
 
     beforeEach(function () {
@@ -43,7 +39,7 @@ contract('MultiSigWallet', function (accounts) {
             '0xff95174a8978f7aff48537f4741135f523079d0b', // accounts[1]
             '0xbb848227f23c08fa38da659d8041112ea5a2b7de' // accounts[2]
         ], 2,
-            '0xbb848227f23c08fa38da659d8041112ea5a2b7de' // random Identify address
+            Identify.address
         ).then(
             function (multisig) {
                 multisig.isOwner('0xff95174a8978f7aff48537f4741135f523079d0b').then(
@@ -153,22 +149,20 @@ contract('MultiSigWallet', function (accounts) {
         }).then(function (isconfirmed) {
             assert.ok(!isconfirmed, "Should not be confirmed");
             return metaMultisig.confirmTransaction(firstTransaction_id, { from: account_two, gas: 3000000 });
-        })
-            .then(function () {
-                return metaMultisig.getConfirmationCount(firstTransaction_id);
-            }).then(function (confirmations) {
-                assert.equal(confirmations.toNumber(), 2, "Should be 2");
-                return metaMultisig.isConfirmed(firstTransaction_id);
-            }).then(function (isconfirmed) {
-                assert.ok(isconfirmed, "Should be confirmed");
-                // confirmed, so transaction should be executed
-                return web3.eth.getBalance(metaMultisig.address);
-            }).then(function (balance) {
-                // must be smaller or equal to the amount we sent. But higher than the amount we send + 50%. 
-                // Cause could be a bit less than the original - 1000000000 of gas costs
-                assert.ok((balance <= (balance_start - 1000000000)) && (balance >= (balance_start - 1500000000)), "Should be less");
-            })
-            ;
+        }).then(function () {
+            return metaMultisig.getConfirmationCount(firstTransaction_id);
+        }).then(function (confirmations) {
+            assert.equal(confirmations.toNumber(), 2, "Should be 2");
+            return metaMultisig.isConfirmed(firstTransaction_id);
+        }).then(function (isconfirmed) {
+            assert.ok(isconfirmed, "Should be confirmed");
+            // confirmed, so transaction should be executed
+            return web3.eth.getBalance(metaMultisig.address);
+        }).then(function (balance) {
+            // must be smaller or equal to the amount we sent. But higher than the amount we send + 50%. 
+            // Cause could be a bit less than the original - 1000000000 of gas costs
+            assert.ok((balance <= (balance_start - 1000000000)) && (balance >= (balance_start - 1500000000)), "Should be less");
+        });
     });
 
     // fail execute transaction cause already executed
@@ -229,8 +223,7 @@ contract('MultiSigWallet', function (accounts) {
             } else {
                 assert.ok(true, "Failed because already executed");
             }
-        })
-            ;
+        });
     });
 
     // execute Transaction by example when there is first 2 required and you change it to 1, transactions who have 1 can be triggered by this function
@@ -273,7 +266,7 @@ contract('MultiSigWallet', function (accounts) {
             return metaMultisig.transactionCount.call();
         }).then(function (transactioncount) {
             beginTransaction = transactioncount.toNumber();
-            return metaMultisig.submitTransaction(account_one, 1000000000, "", { from: account_two, gas: 3000000 });
+            return metaMultisig.submitTransaction(account_one, 1000000000, "");
         }).then(function () {
             firstTransaction_count = beginTransaction + 1;
             firstTransaction_id = beginTransaction;
@@ -294,9 +287,33 @@ contract('MultiSigWallet', function (accounts) {
     });
 
 
+
+    // transfer ownership of token
+    it("Should transfer ownership of token through presale to account_one", function () {
+
+        var new_owner = account_one.substring(2, (account_one.length));
+        // transferownership token
+        var function_data = "0x9ae6892b";
+        var data = function_data + "000000000000000000000000" + new_owner;
+
+        return MultiSigWallet.deployed().then(function (instance) {
+            metaMultisig = instance;
+            return metaMultisig.submitTransaction(Presale.address, 0, data, { from: account_one, gas: 3000000 });
+        }).then(function () {
+            return metaMultisig.transactionCount.call();
+        }).then(function (transactioncount) {
+            var transaction_id = (transactioncount.toNumber() - 1);
+            return metaMultisig.confirmTransaction(transaction_id, { from: account_two, gas: 3000000 });
+        }).then(function () {
+            return metaIdentify.owner.call();
+        }).then(function (owner) {
+            assert.equal(owner, account_one, "Should transfered successful");
+        });
+    });
+
+
     // get Identify token amount
     it("Should display Identify tokens properly", function () {
-
         var Identify_start;
 
         return MultiSigWallet.deployed().then(function (instance) {
@@ -310,8 +327,7 @@ contract('MultiSigWallet', function (accounts) {
             return metaMultisig.getIdentifyAmount();
         }).then(function (tokens) {
             return assert.equal(tokens.toNumber(), Identify_start + 10000000000);
-        })
-            ;
+        });
     });
 
 
@@ -553,8 +569,7 @@ contract('MultiSigWallet', function (accounts) {
             return metaIdentify.balanceOf(account_two);
         }).then(function (balance) {
             assert.equal(balance.toNumber(), (account_two_Identify_start + 10000000000));
-        })
-            ;
+        });
     });
 
 
@@ -592,7 +607,7 @@ contract('MultiSigWallet', function (accounts) {
             metaMultisig = instance;
             return metaMultisig.getTransactionCount(true, true);
         }).then(function (transactioncount) {
-            return assert.equal(transactioncount, 13, "Should have 13 transactions as return value");
+            return assert.equal(transactioncount.toNumber(), 14, "Should have 14 transactions as return value");
         });
     });
     // test getTransactionCount
@@ -601,7 +616,7 @@ contract('MultiSigWallet', function (accounts) {
             metaMultisig = instance;
             return metaMultisig.getTransactionCount(false, true);
         }).then(function (transactioncount) {
-            return assert.equal(transactioncount, 8, "Should have 8 executed transactions as return value");
+            return assert.equal(transactioncount.toNumber(), 9, "Should have 9 executed transactions as return value");
         });
     });
 

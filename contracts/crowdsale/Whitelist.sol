@@ -1,8 +1,8 @@
 pragma solidity ^0.4.18;
 
-import '../ownership/Ownable.sol';
 import '../math/SafeMath.sol';
 import '../token/ERC20.sol';
+import '../ownership/Ownable.sol';
 
 
 contract Whitelist is Ownable {
@@ -43,10 +43,10 @@ contract Whitelist is Ownable {
     }
 
     /**
-     * modifier to check the admin runs this function
+     * modifier to check the admin or owner runs this function
      */
     modifier onlyAdmin() {
-        require(isAdmin[msg.sender]);
+        require(isAdmin[msg.sender] || msg.sender == owner);
         _;
     }
 
@@ -107,7 +107,7 @@ contract Whitelist is Ownable {
      * @param _admin address of admin
      * @return true if _admin is added successful
      */
-    function addAdmin(address _admin) public onlyOwner returns (bool) {
+    function addAdmin(address _admin) public onlyAdmin returns (bool) {
         require(address(_admin) != 0);
         require(!isAdmin[_admin]);
 
@@ -120,7 +120,7 @@ contract Whitelist is Ownable {
      * @param _admin address of admin
      * @return true if _admin is removed successful
      */
-    function removeAdmin(address _admin) public onlyOwner returns (bool) {
+    function removeAdmin(address _admin) public onlyAdmin returns (bool) {
         require(address(_admin) != 0);
         require(isAdmin[_admin]);
         require(msg.sender != _admin);
@@ -132,18 +132,18 @@ contract Whitelist is Ownable {
     /**
      * @notice Pauses the whitelist if there is any issue
      */
-    function pauseWhitelist() public onlyOwner returns (bool) {
+    function pauseWhitelist() public onlyAdmin returns (bool) {
         paused = true;
-        Paused(owner,now);
+        Paused(msg.sender,now);
         return true;
     }
 
     /**
      * @notice resumes the whitelist if there is any issue
      */    
-    function resumeWhitelist() public onlyOwner returns (bool) {
+    function resumeWhitelist() public onlyAdmin returns (bool) {
         paused = false;
-        Resumed(owner,now);
+        Resumed(msg.sender,now);
         return true;
     }
 
@@ -151,7 +151,7 @@ contract Whitelist is Ownable {
     /**
      * @notice rused to save gas
      */ 
-    function addMultipleParticipants(address[] _participants ) public onlyOwner returns (bool) {
+    function addMultipleParticipants(address[] _participants ) public onlyAdmin returns (bool) {
         
         for ( uint i = 0; i < _participants.length; i++ ) {
             require(addParticipant(_participants[i]));
@@ -165,7 +165,7 @@ contract Whitelist is Ownable {
     * @param _claimtoken The address of the token contract that you want to recover
     * set to 0 in case you want to extract ether.
     */
-    function claimTokens(address _claimtoken) onlyOwner public returns (bool) {
+    function claimTokens(address _claimtoken) onlyAdmin public returns (bool) {
         if (_claimtoken == 0x0) {
             owner.transfer(this.balance);
             return true;

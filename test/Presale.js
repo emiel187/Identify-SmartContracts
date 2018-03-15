@@ -73,11 +73,11 @@ contract('Presale', function (accounts) {
         return Presale.deployed().then(function (instance) {
             metaPresale = instance;
             return metaPresale.sendTransaction({ from: account_two, gas: 3000000, value: web3.toWei('25', 'ether') });
-        }).then(function(){
+        }).then(function () {
             inThen = true;
-            assert.ok(false,"Should have failed");
-        }).catch(function(err){
-            if(inThen){
+            assert.ok(false, "Should have failed");
+        }).catch(function (err) {
+            if (inThen) {
                 assert.ok(false, "Should have failed");
             } else {
                 assert.ok(true, "Failed succesfull");
@@ -91,11 +91,11 @@ contract('Presale', function (accounts) {
         return Presale.deployed().then(function (instance) {
             metaPresale = instance;
             return metaPresale.sendTransaction({ from: Whitelist.address, gas: 3000000, value: web3.toWei('5', 'ether') });
-        }).then(function(){
+        }).then(function () {
             inThen = true;
-            assert.ok(false,"Should have failed");
-        }).catch(function(err){
-            if(inThen){
+            assert.ok(false, "Should have failed");
+        }).catch(function (err) {
+            if (inThen) {
                 assert.ok(false, "Should have failed");
             } else {
                 assert.ok(true, "Failed succesfull");
@@ -107,8 +107,8 @@ contract('Presale', function (accounts) {
 
         return Presale.deployed().then(function (instance) {
             metaPresale = instance;
-            return metaWhitelist.addParticipant(account_one, { from: account_one, gas: 3000000});
-        }).then(function () {   
+            return metaWhitelist.addParticipant(account_one, { from: account_one, gas: 3000000 });
+        }).then(function () {
             return metaWhitelist.isParticipant(account_one);
         }).then(function (isParticipant) {
             assert.equal(isParticipant, true, "First account should be added as a participant");
@@ -139,11 +139,11 @@ contract('Presale', function (accounts) {
             return metaPresale.pausePresale();
         }).then(function (balance) {
             return metaPresale.sendTransaction({ from: account_one, gas: 3000000, value: web3.toWei('25', 'ether') });
-        }).then(function(){
+        }).then(function () {
             inThen = true;
-            assert.ok(false,"Should have failed");
-        }).catch(function(err){
-            if(inThen){
+            assert.ok(false, "Should have failed");
+        }).catch(function (err) {
+            if (inThen) {
                 assert.ok(false, "Should have failed");
             } else {
                 assert.ok(true, "Failed succesfull");
@@ -156,7 +156,7 @@ contract('Presale', function (accounts) {
         return Presale.deployed().then(function (instance) {
             metaPresale = instance;
             return metaPresale.resumePresale();
-        }).then(function () {   
+        }).then(function () {
             return metaWhitelist.isParticipant(account_one);
         }).then(function (isParticipant) {
             assert.equal(isParticipant, true, "First account should be a participant");
@@ -168,15 +168,48 @@ contract('Presale', function (accounts) {
         });
     });
 
+    // test transferownershiptoken as owner and not as multisig
+    it('Should not transferownershiptoken when invoking as owner', function () {
+        var inThen;
 
+        return metaPresale.transferOwnershipToken(metaPresaleV2.address).then(function () {
+            inThen = true;
+            assert.ok(false, "Should have failed");
+        }).catch(function (err) {
+            if (inThen) {
+                assert.ok(false, "Should have failed");
+            } else {
+                assert.ok(true, "Failed succesfull");
+            }
+        });
+    });
 
-    // test claimTokens
+    // test transferownershiptoken as multisig
+    it('Should transferownershiptoken when invoking as multisigwallet', function () {
+
+        var new_owner = metaPresaleV2.address.substring(2, (metaPresaleV2.address.length));
+        // transferownership token
+        var function_data = "0x9ae6892b";
+        var data = function_data + "000000000000000000000000" + new_owner;
+
+        return MultiSigWallet.deployed().then(function (instance) {
+            metaMultisig = instance;
+            return metaMultisig.submitTransaction(Presale.address, 0, data, { from: account_one, gas: 3000000 });
+        }).then(function () {
+            return metaMultisig.transactionCount.call();
+        }).then(function (transactioncount) {
+            var transaction_id = (transactioncount.toNumber() - 1);
+            return metaMultisig.confirmTransaction(transaction_id, { from: account_two, gas: 3000000 });
+        }).then(function () {
+            return metaIdentify.owner.call();
+        }).then(function (owner) {
+            assert.equal(owner, metaPresaleV2.address, "Should transfered successful");
+        });
+    });
 
     // test maximum cap op wei
     it('Should buy tokens to setup for further tests', function () {
-        return metaWhitelist.addParticipant(accounts[9], { from: account_one, gas: 3000000}).then(() => {
-            return metaPresale.transferOwnershipToken(metaPresaleV2.address) 
-        }).then(function () {
+        return metaWhitelist.addParticipant(accounts[9]).then(function () {
             return metaIdentify.owner.call();
         }).then(function (owner) {
             return assert.equal(owner, metaPresaleV2.address, "Should be presale");
@@ -184,7 +217,7 @@ contract('Presale', function (accounts) {
             return metaWhitelist.isParticipant(accounts[9]);
         }).then(function (isParticipant) {
             assert.equal(isParticipant, true, "Account should be added as a participant");
-           return metaPresaleV2.sendTransaction({ from: accounts[9], gas: 3000000, value: web3.toWei('10', 'ether') });
+            return metaPresaleV2.sendTransaction({ from: accounts[9], gas: 3000000, value: web3.toWei('10', 'ether') });
         }).then(function () {
             return metaIdentify.balanceOf(accounts[9]);
         }).then(function (balance) {
@@ -196,11 +229,11 @@ contract('Presale', function (accounts) {
     it('Should not buy tokens when not enough wei', function () {
         var inThen = false;
 
-        return metaPresaleV2.sendTransaction({ from: account_one, gas: 3000000, value: 5 }).then(function(){
+        return metaPresaleV2.sendTransaction({ from: account_one, gas: 3000000, value: 5 }).then(function () {
             inThen = true;
-            assert.ok(false,"Should have failed");
-        }).catch(function(err){
-            if(inThen){
+            assert.ok(false, "Should have failed");
+        }).catch(function (err) {
+            if (inThen) {
                 assert.ok(false, "Should have failed");
             } else {
                 assert.ok(true, "Failed succesfull");
@@ -212,11 +245,11 @@ contract('Presale', function (accounts) {
     it('Should not buy tokens when to much wei', function () {
         var inThen = false;
 
-        return metaPresaleV2.sendTransaction({ from: account_one, gas: 3000000, value: web3.toWei('11', 'ether')}).then(function(){
+        return metaPresaleV2.sendTransaction({ from: account_one, gas: 3000000, value: web3.toWei('11', 'ether') }).then(function () {
             inThen = true;
-            assert.ok(false,"Should have failed");
-        }).catch(function(err){
-            if(inThen){
+            assert.ok(false, "Should have failed");
+        }).catch(function (err) {
+            if (inThen) {
                 assert.ok(false, "Should have failed");
             } else {
                 assert.ok(true, "Failed succesfull");
@@ -224,15 +257,15 @@ contract('Presale', function (accounts) {
         });
     });
 
-     // test minimum wei from sender
-     it('Should not buy tokens over eth cap', function () {
+    // test minimum wei from sender
+    it('Should not buy tokens over eth cap', function () {
         var inThen = false;
 
-        return metaPresaleV2.sendTransaction({ from: account_one, gas: 3000000, value: web3.toWei('3', 'ether')}).then(function(){
+        return metaPresaleV2.sendTransaction({ from: account_one, gas: 3000000, value: web3.toWei('3', 'ether') }).then(function () {
             inThen = true;
-            assert.ok(false,"Should have failed");
-        }).catch(function(err){
-            if(inThen){
+            assert.ok(false, "Should have failed");
+        }).catch(function (err) {
+            if (inThen) {
                 assert.ok(false, "Should have failed");
             } else {
                 assert.ok(true, "Failed succesfull");
@@ -269,34 +302,75 @@ contract('Presale', function (accounts) {
     it('Should not be able to buy if tokens if overcap', function () {
         var inThen = false;
 
-            return metaWhitelist.addParticipant(accounts[9], { from: account_one, gas: 3000000}).then(() => {
-                return metaPresale.transferOwnershipToken(metaPresaleV3.address) 
-            }).then(function () {
-                return metaIdentify.owner.call();
-            }).then(function (owner) {
-                return assert.equal(owner, metaPresaleV3.address, "Should be presale");
-            }).then(() => {
+        return metaWhitelist.addParticipant(accounts[9], { from: account_one, gas: 3000000 }).then(() => {
+            return metaPresale.transferOwnershipToken(metaPresaleV3.address)
+        }).then(function () {
+            return metaIdentify.owner.call();
+        }).then(function (owner) {
+            return assert.equal(owner, metaPresaleV3.address, "Should be presale");
+        }).then(() => {
             return metaWhitelist.isParticipant(accounts[9])
-            }).then(function (isParticipant) {
-                assert.equal(isParticipant, true, "First account should be a participant");
-                return metaPresaleV3.sendTransaction({ from: accounts[9], gas: 3000000, value: web3.toWei('2', 'ether') });
-            }).then(function(){
-                    inThen = true;
-                    assert.ok(false,"Should have failed");
-            }).catch(function(err){
-                if(inThen){
-                    assert.ok(false, "Should have failed");
-                } else {
-                    assert.ok(true, "Failed succesfull");
-                }
-            });
+        }).then(function (isParticipant) {
+            assert.equal(isParticipant, true, "First account should be a participant");
+            return metaPresaleV3.sendTransaction({ from: accounts[9], gas: 3000000, value: web3.toWei('2', 'ether') });
+        }).then(function () {
+            inThen = true;
+            assert.ok(false, "Should have failed");
+        }).catch(function (err) {
+            if (inThen) {
+                assert.ok(false, "Should have failed");
+            } else {
+                assert.ok(true, "Failed succesfull");
+            }
+        });
     });
-    
-    // test valid purchase (start and endtime)
 
 
+    // test transferownership as owner and not as multisig
+    it('Should not transfer ownership as owner', function () {
+        var inThen = false;
+
+        return Presale.deployed().then(function (instance) {
+            metaPresale = instance;
+            return metaPresale.owner.call();
+        }).then(function (owner) {
+            assert.equal(owner, account_one);
+            return metaPresale.transferOwnership(account_two, { from: account_one });
+        }).then(function () {
+            inThen = true;
+            assert.ok(false, "Should have failed");
+        }).catch(function (err) {
+            if (inThen) {
+                assert.ok(false, "Should have failed");
+            } else {
+                assert.ok(true, "Failed succesfull");
+            }
+        });
+    });
 
 
+    // test transferownership as multisig
 
+    it('Should transferownership when invoking as multisigwallet', function () {
+        
+                var new_owner = account_two.substring(2, (account_two.length));
+                // transferownership
+                var function_data = "0xf2fde38b";
+                var data = function_data + "000000000000000000000000" + new_owner;
+        
+                return MultiSigWallet.deployed().then(function (instance) {
+                    metaMultisig = instance;
+                    return metaMultisig.submitTransaction(Presale.address, 0, data, { from: account_one, gas: 3000000 });
+                }).then(function () {
+                    return metaMultisig.transactionCount.call();
+                }).then(function (transactioncount) {
+                    var transaction_id = (transactioncount.toNumber() - 1);
+                    return metaMultisig.confirmTransaction(transaction_id, { from: account_two, gas: 3000000 });
+                }).then(function () {
+                    return metaPresale.owner.call();
+                }).then(function (owner) {
+                    assert.equal(owner, account_two, "Should transfered successful");
+                });
+            });
 
 });

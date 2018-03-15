@@ -36,7 +36,7 @@ module.exports = function(deployer, network) {
         ).then(function(){
                 return Identify.deployed().then(function(instance){
                     return instance.transferOwnership(Presale.address);
-                })
+                });
             })
     }
 
