@@ -1,10 +1,23 @@
 // Tests are tested with TestRPC.
 // @author Kevin Leyssens - <kevin.leyssens@theledger.be>
-
 var Identify = artifacts.require("Identify");
 var MultiSigWallet = artifacts.require("MultiSigWallet");
 var Presale = artifacts.require("Presale");
 var Whitelist = artifacts.require("Whitelist");
+
+const timeTravel = function (time) {
+    return new Promise((resolve, reject) => {
+        web3.currentProvider.sendAsync({
+            jsonrpc: "2.0",
+            method: "evm_increaseTime",
+            params: [time], // 86400 is num seconds in day
+            id: new Date().getTime()
+        }, (err, result) => {
+            if (err) { return reject(err) }
+            return resolve(result)
+        });
+    })
+}
 
 
 contract('Presale', function (accounts) {
@@ -19,7 +32,6 @@ contract('Presale', function (accounts) {
     var account_empty = accounts[2];
 
 
-
     before(async function () {
         metaMultiSig = await MultiSigWallet.deployed();
         metaIdentify = await Identify.deployed();
@@ -28,10 +40,11 @@ contract('Presale', function (accounts) {
     });
 
 
+
     it('Should be able to use the constructor', function (done) {
         var starttime = Math.round((Date.now() / 1000))
-        Presale.new(starttime, "0x20c721b0262bd9341c0a7ec685768cb3d33eadfb", metaIdentify.address, metaWhitelist.address, 12,
-            45650000000, 1, 10).then(
+        Presale.new(starttime, metaMultiSig.address, metaIdentify.address, metaWhitelist.address, 12,
+            6300000, 1, 10).then(
             function (presale) {
                 metaPresaleV2 = presale;
                 presale.startTime.call().then(
@@ -287,8 +300,8 @@ contract('Presale', function (accounts) {
 
     it('Should deploy another contract', function (done) {
         var starttime = Math.round((Date.now() / 1000))
-        Presale.new(starttime, "0x20c721b0262bd9341c0a7ec685768cb3d33eadfb", metaIdentify.address, metaWhitelist.address, 12,
-            420000, 1, 10).then(
+        Presale.new(starttime, metaMultiSig.address, metaIdentify.address, metaWhitelist.address, 12,
+            524999, 1, 10).then(
             function (presale) {
                 metaPresaleV3 = presale;
                 presale.startTime.call().then(
@@ -299,20 +312,32 @@ contract('Presale', function (accounts) {
             }).catch(done);
     });
 
-    it('Should not be able to buy if tokens if overcap', function () {
+    it('Should not be able to buy if tokens go over cap', function () {
         var inThen = false;
 
-        return metaWhitelist.addParticipant(accounts[9], { from: account_one, gas: 3000000 }).then(() => {
-            return metaPresale.transferOwnershipToken(metaPresaleV3.address)
+        var new_owner = metaPresaleV3.address.substring(2, (metaPresaleV3.address.length));
+        // transferownership token
+        var function_data = "0x9ae6892b";
+        var data = function_data + "000000000000000000000000" + new_owner;
+
+        return MultiSigWallet.deployed().then(function (instance) {
+            metaMultisig = instance;
+            return metaMultisig.submitTransaction(metaPresaleV2.address, 0, data, { from: account_one, gas: 3000000 });
+        }).then(function () {
+            return metaMultisig.transactionCount.call();
+        }).then(function (transactioncount) {
+            var transaction_id = (transactioncount.toNumber() - 1);
+            return metaMultisig.confirmTransaction(transaction_id, { from: account_two, gas: 3000000 });
         }).then(function () {
             return metaIdentify.owner.call();
         }).then(function (owner) {
-            return assert.equal(owner, metaPresaleV3.address, "Should be presale");
+            return assert.equal(owner, metaPresaleV3.address, "Should transfered successful");
         }).then(() => {
             return metaWhitelist.isParticipant(accounts[9])
         }).then(function (isParticipant) {
             assert.equal(isParticipant, true, "First account should be a participant");
-            return metaPresaleV3.sendTransaction({ from: accounts[9], gas: 3000000, value: web3.toWei('2', 'ether') });
+            // rate is 420000 + 25% bonus = 525000 tokens at 1ETH, the cap is 524999
+            return metaPresaleV3.sendTransaction({ from: accounts[9], gas: 3000000, value: web3.toWei('1', 'ether') });
         }).then(function () {
             inThen = true;
             assert.ok(false, "Should have failed");
@@ -352,25 +377,123 @@ contract('Presale', function (accounts) {
     // test transferownership as multisig
 
     it('Should transferownership when invoking as multisigwallet', function () {
-        
-                var new_owner = account_two.substring(2, (account_two.length));
-                // transferownership
-                var function_data = "0xf2fde38b";
-                var data = function_data + "000000000000000000000000" + new_owner;
-        
-                return MultiSigWallet.deployed().then(function (instance) {
-                    metaMultisig = instance;
-                    return metaMultisig.submitTransaction(Presale.address, 0, data, { from: account_one, gas: 3000000 });
-                }).then(function () {
-                    return metaMultisig.transactionCount.call();
-                }).then(function (transactioncount) {
-                    var transaction_id = (transactioncount.toNumber() - 1);
-                    return metaMultisig.confirmTransaction(transaction_id, { from: account_two, gas: 3000000 });
-                }).then(function () {
-                    return metaPresale.owner.call();
-                }).then(function (owner) {
-                    assert.equal(owner, account_two, "Should transfered successful");
-                });
-            });
+
+        var new_owner = account_two.substring(2, (account_two.length));
+        // transferownership
+        var function_data = "0xf2fde38b";
+        var data = function_data + "000000000000000000000000" + new_owner;
+
+        return MultiSigWallet.deployed().then(function (instance) {
+            metaMultisig = instance;
+            return metaMultisig.submitTransaction(Presale.address, 0, data, { from: account_one, gas: 3000000 });
+        }).then(function () {
+            return metaMultisig.transactionCount.call();
+        }).then(function (transactioncount) {
+            var transaction_id = (transactioncount.toNumber() - 1);
+            return metaMultisig.confirmTransaction(transaction_id, { from: account_two, gas: 3000000 });
+        }).then(function () {
+            return metaPresale.owner.call();
+        }).then(function (owner) {
+            assert.equal(owner, account_two, "Should transfered successful");
+        });
+    });
+
+    // finalize can only be called when it has ended
+    it('Should not finalize presale when not ended', function () {
+        // finalize
+        var function_data = "0x4bb278f3";
+
+        return Presale.deployed().then(function (instance) {
+            metaPresale = instance;
+            return metaPresale.hasEnded.call();
+        }).then(function (ended) {
+            assert.equal(ended, false, "Should be false");
+            return metaPresale.isFinalized.call();
+        }).then(function (finalized) {
+            assert.equal(finalized, false, "Should be false");
+            return metaMultisig.submitTransaction(metaPresale.address, 0, function_data, { from: account_one, gas: 3000000 });
+        }).then(function () {
+            return metaMultisig.transactionCount.call();
+        }).then(function (transactioncount) {
+            var transaction_id = (transactioncount.toNumber() - 1);
+            return metaMultisig.confirmTransaction(transaction_id, { from: account_two, gas: 3000000 });
+        }).then(function () {
+            return metaPresale.isFinalized.call();
+        }).then(function (finalized) {
+            assert.equal(finalized, false, "Should not be finalized");
+        })
+    });
+    // test finalize can be called by multisig only
+    it('Should not finalize presale when not multisig', function () {
+        var inThen = false;
+
+        // finalize
+        var function_data = "0x4bb278f3";
+
+        return metaPresaleV2.hasEnded.call().then(function (ended) {
+            assert.equal(ended, true, "Should be true");
+            return metaPresaleV2.isFinalized.call();
+        }).then(function (finalized) {
+            assert.equal(finalized, false, "Should be false");
+            return metaPresaleV2.finalize();
+        }).then(function () {
+            inThen = true;
+            assert.ok(false, "Should have failed");
+        }).catch(function (err) {
+            if (inThen) {
+                assert.ok(false, "Should have failed");
+            } else {
+                assert.ok(true, "Failed succesfull");
+            }
+        });
+    });
+
+    // test finalization when succesfull and owner is multisig
+    it('Should finalize presale when all requirements are met as multisigwallet + changed owner of token', function () {
+
+        // transferownership token
+
+        var new_owner = metaPresaleV2.address.substring(2, (metaPresaleV2.address.length));
+        var function_data = "0x9ae6892b";
+        var data = function_data + "000000000000000000000000" + new_owner;
+
+        // finalize
+        var function_finalize = "0x4bb278f3";
+
+        return metaPresaleV2.hasEnded.call().then(function (ended) {
+            assert.equal(ended, true, "Should be true");
+            // make presaleV2 owner of token        
+            return metaMultisig.submitTransaction(metaPresaleV3.address, 0, data, { from: account_one, gas: 3000000 });
+        }).then(function () {
+            return metaMultisig.transactionCount.call();
+        }).then(function (transactioncount) {
+            var transaction_id = (transactioncount.toNumber() - 1);
+            return metaMultisig.confirmTransaction(transaction_id, { from: account_two, gas: 3000000 });
+        }).then(function () {
+            return metaIdentify.owner.call();
+        }).then(function (owner) {
+            assert.equal(owner, metaPresaleV2.address, "Should transfered successful");
+            return metaPresaleV2.isFinalized.call();
+        }).then(function (finalized) {
+            assert.equal(finalized, false, "Should be false");
+            return metaMultisig.submitTransaction(metaPresaleV2.address, 0, function_finalize, { from: account_one, gas: 3000000 });
+        }).then(function () {
+            return metaIdentify.owner.call()
+        }).then(function (owner) {
+            assert.equal(owner, metaPresaleV2.address, "Should be presale");
+            return metaMultisig.transactionCount.call();
+        }).then(function (transactioncount) {
+            var transaction_id = (transactioncount.toNumber() - 1);
+            return metaMultisig.confirmTransaction(transaction_id, { from: account_two, gas: 3000000 });
+        }).then(function () {
+            return metaPresaleV2.isFinalized.call();
+        }).then(function (finalized) {
+            assert.equal(finalized, true, "Should be finalized");
+            return metaIdentify.owner.call()
+        }).then(function (owner) {
+            assert.equal(owner, metaMultisig.address, "Should be the multisig after finalization");
+        })
+    });
+
 
 });
