@@ -188,6 +188,7 @@ contract('Identify', function (accounts) {
             }
         });
     });
+    
 
     it("Should burn tokens and update the totalsupply of it", function () {
         return Identify.deployed().then(function (instance) {
