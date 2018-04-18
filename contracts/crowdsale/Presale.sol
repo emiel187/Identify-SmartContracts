@@ -144,7 +144,7 @@ contract Presale is Ownable {
     require(_maximumETH > 0);
 
     startTime = _startTime;
-    endTime = _startTime.add(10 weeks);
+    endTime = _startTime.add(19 weeks);
     wallet = _wallet;
     tokenAddress = _token;
     token = Identify(_token);
@@ -234,7 +234,6 @@ contract Presale is Ownable {
       minimumWEIReached = msg.value >= minimumWEI;
     }
     return (withinPeriod && nonZeroPurchase) && (withinCap && (minimumWEIReached && underMaximumWEI));
-
   }
 
   /**
