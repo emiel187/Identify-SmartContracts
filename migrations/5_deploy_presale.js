@@ -14,7 +14,7 @@ module.exports = function (deployer, network) {
             Whitelist.address,
             8695, // CAP in ETH
             4565000000, // CAP in Tokens
-            25, // minimum ETH
+            10, // minimum ETH
             1000 // maximum ETH
         ).then(function () {
             return Identify.deployed().then(function (instance) {
@@ -30,7 +30,7 @@ module.exports = function (deployer, network) {
             Whitelist.address,
             8695, // CAP in ETH
             4565000000, // CAP in Tokens
-            25, // minimum ETH
+            10, // minimum ETH
             1000 // maximum ETH
         ).then(function () {
             return Identify.deployed().then(function (instance) {

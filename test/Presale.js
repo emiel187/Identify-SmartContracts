@@ -482,6 +482,7 @@ contract('Presale', function (accounts) {
             return metaWhitelist.isParticipant(account_two);
         }).then(function (isParticipant) {
             assert.equal(isParticipant, true, "Should be a participant");
+            // return metaPresaleV5.sendTransaction({ from: account_two, gas: 3000000, value: "2000000000000000000" });
             return metaPresaleV5.sendTransaction({ from: account_two, gas: 3000000, value: web3.toWei('2', 'ether') });
         }).then(function () {
             return metaPresaleV5.hasEnded.call()
