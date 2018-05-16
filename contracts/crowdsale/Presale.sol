@@ -34,7 +34,7 @@ contract Presale is Ownable {
   Whitelist public whitelist;
 
   // how many token units a buyer gets per ETH
-  uint256 public rate = 4200000;
+  uint256 public rate = 420000;
 
   // amount of raised money in wei
   uint256 public weiRaised;  
@@ -204,7 +204,7 @@ contract Presale is Ownable {
    */
   function getTokenAmount(uint256 weiAmount) internal view returns(uint256) {
     // wei has 18 decimals, our token has 6 decimals -> so need for convertion
-    uint256 bonusIntegrated = weiAmount.div(10000000000000).mul(rate).mul(bonusPercentage).div(100);
+    uint256 bonusIntegrated = weiAmount.div(1000000000000).mul(rate).mul(bonusPercentage).div(100);
     return bonusIntegrated;
   }
 
