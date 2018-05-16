@@ -63,7 +63,7 @@ contract('Presale', function (accounts) {
 
         return Presale.deployed().then(function (instance) {
             metaPresale = instance;
-            return metaPresale.sendTransaction({ from: account_two, gas: 3000000, value: web3.toWei('25', 'ether') });
+            return metaPresale.sendTransaction({ from: account_two, gas: 3000000, value: web3.toWei('10', 'ether') });
         }).then(function () {
             inThen = true;
             assert.ok(false, "Should have failed");
@@ -103,22 +103,22 @@ contract('Presale', function (accounts) {
             return metaWhitelist.isParticipant(account_one);
         }).then(function (isParticipant) {
             assert.equal(isParticipant, true, "First account should be added as a participant");
-            return metaPresale.sendTransaction({ from: account_one, gas: 3000000, value: web3.toWei('25', 'ether') });
+            return metaPresale.sendTransaction({ from: account_one, gas: 3000000, value: web3.toWei('10', 'ether') });
         }).then(function () {
             return metaIdentify.balanceOf(account_one);
         }).then(function (balance) {
-            return assert.equal(balance.toNumber(), "13125000000000", "Should have 13125000000000 tokens in his account");
+            return assert.equal(balance.toNumber(), "5250000000000", "Should have 5250000000000 tokens in his account");
         });
     });
 
 
-    it('Should have 25 ETH in the wallet after a valid purchase of 25 ETH', function () {
+    it('Should have 10 ETH in the wallet after a valid purchase of 10 ETH', function () {
 
         return MultiSigWallet.deployed().then(function (instance) {
             metaMultiSig = instance;
             return web3.eth.getBalance(metaMultiSig.address);
         }).then(function (balance) {
-            return assert.equal(balance.toNumber(), web3.toWei('25', 'ether'), "Should have 25 ETH in the wallet");
+            return assert.equal(balance.toNumber(), web3.toWei('10', 'ether'), "Should have 25 ETH in the wallet");
         });
     });
 
@@ -129,7 +129,7 @@ contract('Presale', function (accounts) {
             metaPresale = instance;
             return metaPresale.pausePresale();
         }).then(function (balance) {
-            return metaPresale.sendTransaction({ from: account_one, gas: 3000000, value: web3.toWei('25', 'ether') });
+            return metaPresale.sendTransaction({ from: account_one, gas: 3000000, value: web3.toWei('10', 'ether') });
         }).then(function () {
             inThen = true;
             assert.ok(false, "Should have failed");
@@ -155,7 +155,7 @@ contract('Presale', function (accounts) {
         }).then(function () {
             return metaIdentify.balanceOf(account_one);
         }).then(function (balance) {
-            return assert.equal(balance.toNumber(), "26250000000000", "Should have 13125000000000*2 tokens in his account");
+            return assert.equal(balance.toNumber(), "18375000000000", "Should have 13125000000000 + 5250000000000 tokens in his account");
         });
     });
 
@@ -265,7 +265,7 @@ contract('Presale', function (accounts) {
         }).then(function () {
             return metaIdentify.balanceOf(account_one);
         }).then(function (balance) {
-            return assert.equal(balance.toNumber(), "27300000000000", "Should have 13125000000000 * 2 + 525000000000 * 2 tokens in his account");
+            return assert.equal(balance.toNumber(), "19425000000000", "Should have 13125000000000 + 5250000000000 + (525000000000 * 2) tokens in his account");
         });
     });
 
